@@ -3,4 +3,6 @@
     <string name="title_home">Home</string>
     <string name="title_fav">Fav</string>
     <string name="title_map">Mapa</string>
- </resources>
+
+    <string name="date_format">"yyyy-MM-dd HH:mm:ss"</string>
+</resources>

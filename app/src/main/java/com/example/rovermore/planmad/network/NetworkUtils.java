@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -98,18 +99,30 @@ public class NetworkUtils {
             String stringDtEnd = jsonEvent.optString("dtend");
             Date dtend = fromStringToDate(stringDtEnd);
             JSONObject jsonRecurrence = jsonEvent.optJSONObject("recurrence");
-            String recurrenceDays = jsonRecurrence.optString("days");
-            String recurrenceFrecuency = jsonRecurrence.optString("frecuency");
+            String recurrenceDays = null;
+            String recurrenceFrequency = null;
+            if(jsonRecurrence!=null) {
+                recurrenceDays = jsonRecurrence.optString("days");
+                recurrenceFrequency = jsonRecurrence.optString("frequency");
+            }
             String eventLocation = jsonEvent.optString("event-location");
             JSONObject jsonLocation = jsonEvent.optJSONObject("location");
-            double latitude = jsonLocation.optDouble("latitude");
-            double longitude = jsonLocation.optDouble("longitude");
+            double latitude = 0;
+            double longitude = 0;
+            if(jsonLocation!=null) {
+                latitude = jsonLocation.optDouble("latitude");
+                longitude = jsonLocation.optDouble("longitude");
+            }
 
             Event event = new Event(id, title, description, price, dtstart, dtend,recurrenceDays,
-                    recurrenceFrecuency, eventLocation, latitude, longitude);
+                    recurrenceFrequency, eventLocation, latitude, longitude);
 
             Log.v(TAG, "title " + title);
             Log.v(TAG, "id " + id);
+            Log.v(TAG, "RECURRENCE DAYS: " + recurrenceDays);
+            Log.v(TAG, "RECURRENCE FREQUENCY " + recurrenceFrequency);
+            Log.v(TAG, "LATITUDE " + latitude);
+            Log.v(TAG, "LONGITUDE " + longitude);
 
             eventList.add(event);
         }
@@ -129,7 +142,7 @@ public class NetworkUtils {
 
     public static Date fromStringToDate(String stringDate){
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd''HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd :mm:ss");
         try {
             Date date = format.parse(stringDate);
             Log.v(TAG,"Date parsed is: " + date);
@@ -138,6 +151,14 @@ public class NetworkUtils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static String fromDateToString(Date date){
+
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String textDate = df.format(date);
+
+        return textDate;
     }
 }
 
