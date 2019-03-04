@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@android:color/black">
 
@@ -25,7 +25,6 @@
         android:id="@+id/tv_main_title"
         style="@style/ListStyle"
         android:textStyle="bold"
-        android:textSize="12sp"
         android:text="Concierto Liam Gallagher"/>
 
     <TextView

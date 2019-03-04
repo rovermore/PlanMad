@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.adapters.MainAdapter;
@@ -41,7 +40,6 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.tv_text_main_fragment);
 
         recyclerView = rootView.findViewById(R.id.rv_list_events);
         layoutManager = new LinearLayoutManager(rootView.getContext());

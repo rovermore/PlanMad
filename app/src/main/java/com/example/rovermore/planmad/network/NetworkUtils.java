@@ -20,6 +20,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -127,7 +129,18 @@ public class NetworkUtils {
             eventList.add(event);
         }
 
+        sortEventList(eventList);
+
         return eventList;
+    }
+
+    private static void sortEventList(List<Event> eventList) {
+        Collections.sort(eventList, new Comparator<Event>() {
+            @Override
+            public int compare(Event o1, Event o2) {
+                return o1.getDtstart().compareTo(o2.getDtstart());
+            }
+        });
     }
 
     public static boolean isInternetAvailable(Context context) {
@@ -142,7 +155,7 @@ public class NetworkUtils {
 
     public static Date fromStringToDate(String stringDate){
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd :mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             Date date = format.parse(stringDate);
             Log.v(TAG,"Date parsed is: " + date);
