@@ -1,8 +1,11 @@
 package com.example.rovermore.planmad.datamodel;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
-public class Event {
+public class Event implements Parcelable {
 
     private int id;
     private String title;
@@ -74,4 +77,53 @@ public class Event {
     public double getLongitude() {
         return longitude;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeInt(this.price);
+        dest.writeLong(this.dtstart != null ? this.dtstart.getTime() : -1);
+        dest.writeLong(this.dtend != null ? this.dtend.getTime() : -1);
+        dest.writeString(this.recurrenceDays);
+        dest.writeString(this.recurrenceFrequency);
+        dest.writeString(this.eventLocation);
+        dest.writeDouble(this.latitude);
+        dest.writeDouble(this.longitude);
+    }
+
+    protected Event(Parcel in) {
+        this.id = in.readInt();
+        this.title = in.readString();
+        this.description = in.readString();
+        this.price = in.readInt();
+        long tmpDtstart = in.readLong();
+        this.dtstart = tmpDtstart == -1 ? null : new Date(tmpDtstart);
+        long tmpDtend = in.readLong();
+        this.dtend = tmpDtend == -1 ? null : new Date(tmpDtend);
+        this.recurrenceDays = in.readString();
+        this.recurrenceFrequency = in.readString();
+        this.eventLocation = in.readString();
+        this.latitude = in.readDouble();
+        this.longitude = in.readDouble();
+    }
+
+    public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
+        @Override
+        public Event createFromParcel(Parcel source) {
+            return new Event(source);
+        }
+
+        @Override
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
 }

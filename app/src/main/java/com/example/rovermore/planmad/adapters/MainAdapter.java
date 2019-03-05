@@ -19,10 +19,16 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
 
     private Context context;
     private List<Event> eventList;
+    private onEventClickListener eventClickListener;
 
-    public MainAdapter(@NonNull Context context, List<Event> eventList) {
+    public MainAdapter(@NonNull Context context, List<Event> eventList, onEventClickListener eventClickListener) {
         this.context = context;
         this.eventList = eventList;
+        this.eventClickListener = eventClickListener;
+    }
+
+    public interface onEventClickListener{
+        void onEventClicked(Event event);
     }
 
     @NonNull
@@ -59,7 +65,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
         }
     }
 
-    public class MyEventViewHolder extends RecyclerView.ViewHolder {
+    public class MyEventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView tvDate;
         TextView tvTitle;
         TextView tvLocation;
@@ -72,6 +78,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
             tvTitle = itemView.findViewById(R.id.tv_main_title);
             tvLocation = itemView.findViewById(R.id.tv_main_location);
             tvPrice = itemView.findViewById(R.id.tv_main_price);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            Event event = eventList.get(position);
+            eventClickListener.onEventClicked(event);
         }
     }
 
