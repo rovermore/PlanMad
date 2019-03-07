@@ -6,12 +6,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.rovermore.planmad.AppExecutors;
 import com.example.rovermore.planmad.R;
+import com.example.rovermore.planmad.database.AppDatabase;
 import com.example.rovermore.planmad.datamodel.Event;
 
 
 public class DetailFragment extends Fragment {
+
+    private AppDatabase mDb;
 
     private Event event;
     private TextView name;
@@ -22,6 +27,7 @@ public class DetailFragment extends Fragment {
     private TextView recurrenceFrequency;
     private TextView price;
     private TextView description;
+    private TextView fav;
 
 
     public DetailFragment() {}
@@ -38,6 +44,8 @@ public class DetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
+        mDb = AppDatabase.getInstance(getContext());
+
         if(getArguments()!=null){
             event = getArguments().getParcelable(MainFragment.EVENT_KEY_NAME);
         } else {
@@ -52,6 +60,7 @@ public class DetailFragment extends Fragment {
         recurrenceFrequency = rootView.findViewById(R.id.tv_detail_recurrence_frequency);
         price = rootView.findViewById(R.id.tv_detail_price);
         description = rootView.findViewById(R.id.tv_detail_description);
+        fav = rootView.findViewById(R.id.tv_detail_favoritos);
 
         name.setText(event.getTitle());
         location.setText(event.getEventLocation());
@@ -61,6 +70,22 @@ public class DetailFragment extends Fragment {
         recurrenceFrequency.setText(event.getRecurrenceFrequency());
         price.setText(String.valueOf(event.getPrice()));
         description.setText(event.getDescription());
+
+        fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: SAVE EVENT IN DATABASE
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDb.eventDao().insertEvent(event);
+
+                    }
+                });
+
+                Toast.makeText(getContext(),"Event saved in favorites",Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return rootView;
     }

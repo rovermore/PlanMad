@@ -34,6 +34,12 @@
                 android:textColor="@android:color/white"
                 android:layout_marginTop="28dp"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/colorAccent"
+                android:layout_marginTop="28dp"/>
+
             <TextView
                 android:id="@+id/tv_detail_location"
                 android:layout_width="match_parent"
@@ -71,7 +77,21 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white" />
 
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_detail_favoritos"
+                android:background="@drawable/rounded_background"
+                android:text="@string/favoritos"
+                android:layout_marginTop="30dp"
+                android:layout_gravity="center"
+                android:textSize="28sp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingBottom="3dp"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                />
         </LinearLayout>
 
     </ScrollView>

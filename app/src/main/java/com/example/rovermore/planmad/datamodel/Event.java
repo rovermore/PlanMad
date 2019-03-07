@@ -1,12 +1,15 @@
 package com.example.rovermore.planmad.datamodel;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.Date;
-
+@Entity(tableName = "favEvents")
 public class Event implements Parcelable {
 
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String title;
     private String description;
