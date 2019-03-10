@@ -1,8 +1,10 @@
 package com.example.rovermore.planmad.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,17 +31,32 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private MainAdapter eventListAdapter;
+    private Parcelable mListState;
+    private List<Event> eventList;
+    private Context context;
+
+    private OnDataPass onDataPass;
 
     private AppDatabase mDb;
 
     private final static int ASYNC_TASK_INT = 101;
     public final static String EVENT_KEY_NAME = "event_name";
+    public static final String LIST_STATE_KEY = "recycler_view_state";
+    public static final String LAYOUT_MANAGER_KEY = "layout_manager_state";
+    public static final String EVENT_LIST_KEY = "data_state";
+
+    public interface OnDataPass {
+        void onDataPass(Parcelable mListState, RecyclerView.LayoutManager layoutManager,
+                        List<Event> eventList);
+    }
 
     public MainFragment() {}
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onDataPass = (OnDataPass) context;
+        this.context = context;
 
     }
 
@@ -57,7 +74,16 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(eventListAdapter);
 
-        new FetchEvents().execute(ASYNC_TASK_INT);
+        if(getArguments()!=null){
+            mListState = getArguments().getParcelable(LIST_STATE_KEY);
+            layoutManager.onRestoreInstanceState(mListState);
+            eventList = getArguments().getParcelableArrayList(EVENT_LIST_KEY);
+            eventListAdapter.setEventList(eventList);
+
+        } else {
+
+            new FetchEvents().execute(ASYNC_TASK_INT);
+        }
 
         return rootView;
     }
@@ -89,9 +115,30 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         @Override
         protected void onPostExecute(List<Event> events) {
             super.onPostExecute(events);
+
             if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
             eventListAdapter.setEventList(events);
+            eventList = events;
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // Save list state
+        mListState = layoutManager.onSaveInstanceState();
+        onDataPass.onDataPass(mListState,layoutManager,eventList);
+
+    }
+
+    /*@Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Save list state
+        mListState = layoutManager.onSaveInstanceState();
+        outState.putParcelable(LIST_STATE_KEY, mListState);
+        outState.putParcelableArrayList(EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) eventList);
+    }*/
 }
