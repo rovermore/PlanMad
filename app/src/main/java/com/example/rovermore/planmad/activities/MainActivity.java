@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -19,15 +18,18 @@ import com.example.rovermore.planmad.fragments.TodayFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MainFragment.OnDataPass {
+public class MainActivity extends AppCompatActivity implements MainFragment.OnDataPass,
+        FavFragment.OnDataPassFromFavFragment,
+        TodayFragment.OnDataPassFromTodayFragment{
 
     private TextView mTextMessage;
 
     private FragmentManager fragmentManager;
-    private Parcelable mListState;
-    private RecyclerView.LayoutManager layoutManager;
-    private List<Event> eventList;
-    private boolean isDataPassed = false;
+    private Parcelable mListState, mFavListState, mTodayListState;
+    private List<Event> eventList, todayEventList;
+    private boolean isDataPassedFromMainFragment = false;
+    private boolean isDataPassedFromFavFragment = false;
+    private boolean isDataPassedFromTodayFragment = false;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
     private void setUpHomeFragment() {
         MainFragment mainFragment = new MainFragment();
-        if (isDataPassed) {
+        if (isDataPassedFromMainFragment) {
             Bundle bundle = new Bundle();
             bundle.putParcelable(MainFragment.LIST_STATE_KEY, mListState);
             bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) eventList);
@@ -81,6 +83,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
     private void setUpFavFragment(){
         FavFragment favFragment = new FavFragment();
+        if (isDataPassedFromFavFragment){
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(MainFragment.LIST_STATE_KEY, mFavListState);
+            favFragment.setArguments(bundle);
+        }
         fragmentManager.beginTransaction()
                 .replace(R.id.main_frame_layout, favFragment)
                 .commit();
@@ -88,18 +95,34 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
     private void setUpTodayFragment(){
         TodayFragment todayFragment = new TodayFragment();
+        if (isDataPassedFromTodayFragment){
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(MainFragment.LIST_STATE_KEY, mTodayListState);
+            bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) todayEventList);
+            todayFragment.setArguments(bundle);
+        }
         fragmentManager.beginTransaction()
                 .replace(R.id.main_frame_layout, todayFragment)
                 .commit();
     }
 
     @Override
-    public void onDataPass(Parcelable mListState, RecyclerView.LayoutManager layoutManager, List<Event> eventList) {
+    public void onDataPass(Parcelable mListState, List<Event> eventList) {
         this.mListState = mListState;
-        this.layoutManager = layoutManager;
         this.eventList = eventList;
-        isDataPassed = true;
+        isDataPassedFromMainFragment = true;
     }
 
+    @Override
+    public void onDataPassFromFavFragment(Parcelable mListState) {
+        this.mFavListState = mListState;
+        isDataPassedFromFavFragment = true;
+    }
 
+    @Override
+    public void onDataPassFromTodayFragment(Parcelable mListState, List<Event> eventList) {
+        this.mTodayListState = mListState;
+        this.todayEventList = eventList;
+        isDataPassedFromTodayFragment = true;
+    }
 }

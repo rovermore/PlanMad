@@ -2,8 +2,10 @@ package com.example.rovermore.planmad.fragments;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,13 +31,27 @@ public class FavFragment extends Fragment implements MainAdapter.onEventClickLis
 
     private static final String TAG = FavFragment.class.getSimpleName();
 
+    private Context context;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private MainAdapter eventListAdapter;
+    private OnDataPassFromFavFragment onDataPassFromFavFragment;
+    private Parcelable mListState;
 
     private AppDatabase mDb;
 
+    public interface OnDataPassFromFavFragment {
+        void onDataPassFromFavFragment(Parcelable mListState);
+    }
+
     public FavFragment() {}
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onDataPassFromFavFragment = (OnDataPassFromFavFragment) context;
+        this.context = context;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +71,11 @@ public class FavFragment extends Fragment implements MainAdapter.onEventClickLis
         eventListAdapter = new MainAdapter(getContext(), null, this);
 
         setUpFavViewModel();
+
+        if(getArguments()!=null) {
+            mListState = getArguments().getParcelable(MainFragment.LIST_STATE_KEY);
+            layoutManager.onRestoreInstanceState(mListState);
+        }
 
         /*
          Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
@@ -113,5 +134,13 @@ public class FavFragment extends Fragment implements MainAdapter.onEventClickLis
         Intent intent = new Intent(getActivity(), DetailActivity.class);
         intent.putExtra(MainFragment.EVENT_KEY_NAME, event);
         startActivity(intent);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mListState = layoutManager.onSaveInstanceState();
+        onDataPassFromFavFragment.onDataPassFromFavFragment(mListState);
     }
 }

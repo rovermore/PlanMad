@@ -1,8 +1,10 @@
 package com.example.rovermore.planmad.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,17 +30,26 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private MainAdapter eventListAdapter;
+    private Context context;
+    private List<Event> eventList;
+    private Parcelable mListState;
+    private OnDataPassFromTodayFragment onDataPassFromTodayFragment;
 
     private AppDatabase mDb;
 
     private final static int ASYNC_TASK_INT = 102;
 
+    public interface OnDataPassFromTodayFragment {
+        void onDataPassFromTodayFragment(Parcelable mListState, List<Event> eventList);
+    }
 
     public TodayFragment() {}
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onDataPassFromTodayFragment = (OnDataPassFromTodayFragment) context;
+        this.context = context;
 
     }
 
@@ -56,7 +67,16 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(eventListAdapter);
 
-        new FetchEvents().execute(ASYNC_TASK_INT);
+        if(getArguments()!=null){
+            mListState = getArguments().getParcelable(MainFragment.LIST_STATE_KEY);
+            layoutManager.onRestoreInstanceState(mListState);
+            eventList = getArguments().getParcelableArrayList(MainFragment.EVENT_LIST_KEY);
+            eventListAdapter.setEventList(eventList);
+
+        } else {
+
+            new FetchEvents().execute(ASYNC_TASK_INT);
+        }
 
         return rootView;
     }
@@ -92,6 +112,14 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
             super.onPostExecute(events);
             if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
             eventListAdapter.setEventList(events);
+            eventList = events;
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mListState = layoutManager.onSaveInstanceState();
+        onDataPassFromTodayFragment.onDataPassFromTodayFragment(mListState, eventList);
     }
 }

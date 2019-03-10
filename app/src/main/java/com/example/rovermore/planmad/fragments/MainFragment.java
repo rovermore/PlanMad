@@ -42,12 +42,10 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     private final static int ASYNC_TASK_INT = 101;
     public final static String EVENT_KEY_NAME = "event_name";
     public static final String LIST_STATE_KEY = "recycler_view_state";
-    public static final String LAYOUT_MANAGER_KEY = "layout_manager_state";
     public static final String EVENT_LIST_KEY = "data_state";
 
     public interface OnDataPass {
-        void onDataPass(Parcelable mListState, RecyclerView.LayoutManager layoutManager,
-                        List<Event> eventList);
+        void onDataPass(Parcelable mListState, List<Event> eventList);
     }
 
     public MainFragment() {}
@@ -115,7 +113,6 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         @Override
         protected void onPostExecute(List<Event> events) {
             super.onPostExecute(events);
-
             if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
             eventListAdapter.setEventList(events);
             eventList = events;
@@ -125,20 +122,9 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     @Override
     public void onPause() {
         super.onPause();
-
         // Save list state
         mListState = layoutManager.onSaveInstanceState();
-        onDataPass.onDataPass(mListState,layoutManager,eventList);
+        onDataPass.onDataPass(mListState, eventList);
 
     }
-
-    /*@Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        // Save list state
-        mListState = layoutManager.onSaveInstanceState();
-        outState.putParcelable(LIST_STATE_KEY, mListState);
-        outState.putParcelableArrayList(EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) eventList);
-    }*/
 }
