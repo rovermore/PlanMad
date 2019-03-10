@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Calendar;
 
 public class NetworkUtils {
 
@@ -172,6 +173,23 @@ public class NetworkUtils {
         String textDate = df.format(date);
 
         return textDate;
+    }
+
+    public static List<Event> getTodayList(List<Event> eventList){
+        List<Event> todayEventList = new ArrayList<>();
+        Date currentDate = Calendar.getInstance().getTime();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String currentDateText = df.format(currentDate);
+
+        for (Event event : eventList){
+            Date eventDate = event.getDtstart();
+            String eventDateText = df.format(eventDate);
+            if (eventDateText.equals(currentDateText)){
+                todayEventList.add(event);
+            }
+        }
+
+        return todayEventList;
     }
 }
 

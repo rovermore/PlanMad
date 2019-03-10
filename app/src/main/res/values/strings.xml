@@ -2,6 +2,7 @@
     <string name="app_name">PlanMad</string>
     <string name="title_home">Home</string>
     <string name="title_fav">Fav</string>
+    <string name="title_today">Hoy</string>
     <string name="title_map">Mapa</string>
 
     <string name="date_format">"yyyy-MM-dd HH:mm:ss"</string>

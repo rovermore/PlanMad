@@ -15,7 +15,7 @@ import java.util.List;
 @Dao
 public interface EventDao {
 
-    @Query("SELECT * FROM favEvents")
+    @Query("SELECT * FROM favEvents ORDER BY dtstart ASC")
     LiveData<List<Event>> loadAllEvents();
 
     @Insert

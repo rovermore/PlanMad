@@ -23,8 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class MainFragment extends Fragment implements MainAdapter.onEventClickListener {
+public class TodayFragment extends Fragment implements MainAdapter.onEventClickListener {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -32,10 +31,10 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
 
     private AppDatabase mDb;
 
-    private final static int ASYNC_TASK_INT = 101;
-    public final static String EVENT_KEY_NAME = "event_name";
+    private final static int ASYNC_TASK_INT = 102;
 
-    public MainFragment() {}
+
+    public TodayFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,11 +45,11 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_today, container, false);
 
         mDb = AppDatabase.getInstance(getContext());
 
-        recyclerView = rootView.findViewById(R.id.rv_list_events);
+        recyclerView = rootView.findViewById(R.id.rv_today_events);
         layoutManager = new LinearLayoutManager(rootView.getContext());
         eventListAdapter = new MainAdapter(getContext(), null, this);
         recyclerView.setLayoutManager(layoutManager);
@@ -65,7 +64,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     @Override
     public void onEventClicked(Event event) {
         Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(EVENT_KEY_NAME, event);
+        intent.putExtra(MainFragment.EVENT_KEY_NAME, event);
         startActivity(intent);
     }
 
@@ -75,15 +74,17 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         @Override
         protected List<Event> doInBackground(Integer... integers) {
             List<Event> eventList = new ArrayList<>();
+            List<Event> todayEventList = new ArrayList<>();
             try {
                 String jsonResponse = NetworkUtils.getResponseFromHttpUrl();
                 eventList = NetworkUtils.parseJson(jsonResponse);
+                todayEventList = NetworkUtils.getTodayList(eventList);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return eventList;
+            return todayEventList;
         }
 
         @Override
@@ -93,5 +94,4 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             eventListAdapter.setEventList(events);
         }
     }
-
 }

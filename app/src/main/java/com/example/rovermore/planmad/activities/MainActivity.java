@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.fragments.FavFragment;
 import com.example.rovermore.planmad.fragments.MainFragment;
+import com.example.rovermore.planmad.fragments.TodayFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.navigation_fav:
                     setUpFavFragment();
+                    return true;
+                case R.id.navigation_today:
+                    setUpTodayFragment();
                     return true;
                 case R.id.navigation_map:
 
@@ -66,4 +70,10 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+    private void setUpTodayFragment(){
+        TodayFragment todayFragment = new TodayFragment();
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_frame_layout, todayFragment)
+                .commit();
+    }
 }
