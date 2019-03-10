@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.rovermore.planmad.R;
+import com.example.rovermore.planmad.fragments.FavFragment;
 import com.example.rovermore.planmad.fragments.MainFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,16 +26,13 @@ public class MainActivity extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    MainFragment mainFragment = new MainFragment();
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.main_frame_layout, mainFragment)
-                            .commit();
+                    setUpHomeFragment();
                     return true;
                 case R.id.navigation_fav:
-                    mTextMessage.setText(R.string.title_fav);
+                    setUpFavFragment();
                     return true;
                 case R.id.navigation_map:
-                    mTextMessage.setText(R.string.title_map);
+
                     return true;
             }
             return false;
@@ -51,6 +49,21 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        setUpHomeFragment();
+    }
+
+    private void setUpHomeFragment() {
+        MainFragment mainFragment = new MainFragment();
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_frame_layout, mainFragment)
+                .commit();
+    }
+
+    private void setUpFavFragment(){
+        FavFragment favFragment = new FavFragment();
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_frame_layout, favFragment)
+                .commit();
     }
 
 }

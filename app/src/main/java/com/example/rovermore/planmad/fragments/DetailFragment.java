@@ -2,19 +2,22 @@ package com.example.rovermore.planmad.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.rovermore.planmad.AppExecutors;
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.database.AppDatabase;
 import com.example.rovermore.planmad.datamodel.Event;
+import com.example.rovermore.planmad.threads.AppExecutors;
 
 
 public class DetailFragment extends Fragment {
+
+    private static final String TAG = DetailFragment.class.getSimpleName();
 
     private AppDatabase mDb;
 
@@ -29,6 +32,8 @@ public class DetailFragment extends Fragment {
     private TextView description;
     private TextView fav;
 
+    private boolean isEventSavedInFav;
+    private Event eventFromDatabase;
 
     public DetailFragment() {}
 
@@ -48,8 +53,10 @@ public class DetailFragment extends Fragment {
 
         if(getArguments()!=null){
             event = getArguments().getParcelable(MainFragment.EVENT_KEY_NAME);
+            Log.d(TAG,"Event retrieved successfully from parcelable");
         } else {
             event = null;
+            Log.d(TAG,"Error retrieving Event from parcelable");
         }
 
         name = rootView.findViewById(R.id.tv_detail_name);
@@ -71,26 +78,46 @@ public class DetailFragment extends Fragment {
         price.setText(String.valueOf(event.getPrice()));
         description.setText(event.getDescription());
 
+        checkEventInDatabase();
+
         fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: SAVE EVENT IN DATABASE
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDb.eventDao().insertEvent(event);
-
-                    }
-                });
-
-                Toast.makeText(getContext(),"Event saved in favorites",Toast.LENGTH_SHORT).show();
+                if(!isEventSavedInFav) {
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDb.eventDao().insertEvent(event);
+                            isEventSavedInFav = true;
+                        }
+                    });
+                    Log.d(TAG, "Event saved in favorites");
+                    Toast.makeText(getContext(), "Evento guardado en favoritos", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "El evento ya está guardado en favoritos", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         return rootView;
     }
 
+    private void checkEventInDatabase() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                eventFromDatabase = mDb.eventDao().loadEventByHash(event.getHash());
 
+                if(eventFromDatabase!=null){
+                    isEventSavedInFav = true;
+                    Log.d(TAG,"EL ID EN BBDD DEL EVENTO ES " + eventFromDatabase.getIdDatabase());
+                } else {
+                    isEventSavedInFav = false;
+                }
+            }
+        });
+
+    }
 
 
 }

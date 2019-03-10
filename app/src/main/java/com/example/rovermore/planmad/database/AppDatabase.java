@@ -24,6 +24,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 Log.d(LOG_TAG, "Creating new database instance");
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                         AppDatabase.class, AppDatabase.DATABASE_NAME)
+                        //.addMigrations(MIGRATION_1_2)
                         .build();
             }
         }
@@ -32,5 +33,14 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public abstract EventDao eventDao();
+
+   /* static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE favEvents "
+                    +"ADD COLUMN idDatabase INTEGER");
+
+        }
+    };*/
 
 }

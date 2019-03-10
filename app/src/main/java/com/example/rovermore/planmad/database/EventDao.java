@@ -16,7 +16,7 @@ import java.util.List;
 public interface EventDao {
 
     @Query("SELECT * FROM favEvents")
-    LiveData<List<Event>> loadAllMovies();
+    LiveData<List<Event>> loadAllEvents();
 
     @Insert
     void insertEvent(Event Event);
@@ -27,10 +27,12 @@ public interface EventDao {
     @Delete
     void deleteEvent(Event Event);
 
-    @Query("DELETE FROM favEvents WHERE id = :id")
-    int deleteBydbId(int id);
+    @Query("DELETE FROM favEvents WHERE idDatabase = :idDatabase")
+    int deleteBydbId(int idDatabase);
 
-    @Query("SELECT * FROM favEvents WHERE id = :id")
-    LiveData<Event> loadEventById(int id);
+    @Query("SELECT * FROM favEvents WHERE idDatabase = :idDatabase")
+    LiveData<Event> loadEventById(int idDatabase);
 
+    @Query("SELECT * FROM favEvents WHERE hash = :hash")
+    Event loadEventByHash(int hash);
 }

@@ -1,6 +1,7 @@
 package com.example.rovermore.planmad.datamodel;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -10,7 +11,8 @@ import java.util.Date;
 public class Event implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int idDatabase;
+    private int hash;
     private String title;
     private String description;
     private int price;
@@ -22,9 +24,10 @@ public class Event implements Parcelable {
     private double latitude;
     private double longitude;
 
-    public Event(int id, String title, String description, int price, Date dtstart, Date dtend,
+    @Ignore
+    public Event(int hash, String title, String description, int price, Date dtstart, Date dtend,
         String recurrenceDays, String recurrenceFrequency, String eventLocation, double latitude, double longitude){
-        this.id = id;
+        this.hash = hash;
         this.title = title;
         this.description = description;
         this.price = price;
@@ -37,8 +40,26 @@ public class Event implements Parcelable {
         this.longitude = longitude;
     }
 
-    public int getId() {
-        return id;
+    public Event(int idDatabase, int hash, String title, String description, int price, Date dtstart, Date dtend,
+                 String recurrenceDays, String recurrenceFrequency, String eventLocation, double latitude, double longitude){
+        this.idDatabase = idDatabase;
+        this.hash = hash;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.dtstart = dtstart;
+        this.dtend = dtend;
+        this.recurrenceDays = recurrenceDays;
+        this.recurrenceFrequency = recurrenceFrequency;
+        this.eventLocation = eventLocation;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public int getIdDatabase(){return idDatabase;}
+
+    public int getHash() {
+        return hash;
     }
 
     public String getTitle() {
@@ -89,7 +110,8 @@ public class Event implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
+        dest.writeInt(this.idDatabase);
+        dest.writeInt(this.hash);
         dest.writeString(this.title);
         dest.writeString(this.description);
         dest.writeInt(this.price);
@@ -103,7 +125,8 @@ public class Event implements Parcelable {
     }
 
     protected Event(Parcel in) {
-        this.id = in.readInt();
+        this.idDatabase = in.readInt();
+        this.hash = in.readInt();
         this.title = in.readString();
         this.description = in.readString();
         this.price = in.readInt();

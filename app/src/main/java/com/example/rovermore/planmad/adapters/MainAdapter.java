@@ -102,4 +102,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
         this.eventList = eventList;
         notifyDataSetChanged();
     }
+
+    public List<Event> getEventList(){
+        return eventList;
+    }
 }

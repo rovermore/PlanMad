@@ -91,8 +91,8 @@ public class NetworkUtils {
         for (int i = 0; i < resultArray.length(); i++) {
 
             JSONObject jsonEvent = resultArray.getJSONObject(i);
-            String stringId = jsonEvent.optString("id");
-            int id = Integer.parseInt(stringId);
+            String stringHash = jsonEvent.optString("id");
+            int hash = Integer.parseInt(stringHash);
             String title = jsonEvent.optString("title");
             String description = jsonEvent.optString("description");
             int price = jsonEvent.optInt("price");
@@ -116,11 +116,11 @@ public class NetworkUtils {
                 longitude = jsonLocation.optDouble("longitude");
             }
 
-            Event event = new Event(id, title, description, price, dtstart, dtend,recurrenceDays,
+            Event event = new Event(hash, title, description, price, dtstart, dtend,recurrenceDays,
                     recurrenceFrequency, eventLocation, latitude, longitude);
 
             Log.v(TAG, "title " + title);
-            Log.v(TAG, "id " + id);
+            Log.v(TAG, "id " + hash);
             Log.v(TAG, "RECURRENCE DAYS: " + recurrenceDays);
             Log.v(TAG, "RECURRENCE FREQUENCY " + recurrenceFrequency);
             Log.v(TAG, "LATITUDE " + latitude);
