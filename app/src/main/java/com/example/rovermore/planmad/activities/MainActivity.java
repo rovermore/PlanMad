@@ -1,5 +1,6 @@
 package com.example.rovermore.planmad.activities;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -21,6 +22,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
@@ -32,7 +34,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements MainFragment.OnDataPass,
         FavFragment.OnDataPassFromFavFragment,
         TodayFragment.OnDataPassFromTodayFragment,
-        OnMapReadyCallback {
+        OnMapReadyCallback,
+        GoogleMap.OnInfoWindowClickListener {
 
     private final static int ASYNC_TASK_INT = 103;
 
@@ -160,8 +163,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         for(int i = 0;i<todayEventList.size();i++) {
             Event event = todayEventList.get(i);
             LatLng eventLocation = new LatLng(event.getLatitude(), event.getLongitude());
-            googleMap.addMarker(new MarkerOptions().position(eventLocation)
+            Marker marker = googleMap.addMarker(new MarkerOptions().position(eventLocation)
                     .title(event.getTitle()));
+            marker.setTag(event);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLocation,10.0f));
         }
         googleMap.getUiSettings().setZoomControlsEnabled(true);
@@ -170,7 +174,16 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         googleMap.getUiSettings().setTiltGesturesEnabled(true);
         googleMap.getUiSettings().setScrollGesturesEnabledDuringRotateOrZoom(true);
 
+        googleMap.setOnInfoWindowClickListener(this);
 
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Event event = (Event) marker.getTag();
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(MainFragment.EVENT_KEY_NAME, event);
+        startActivity(intent);
     }
 
     private class FetchEvents extends AsyncTask<Integer, Void, List<Event>> {
