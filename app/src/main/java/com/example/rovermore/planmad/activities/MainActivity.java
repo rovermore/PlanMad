@@ -1,5 +1,6 @@
 package com.example.rovermore.planmad.activities;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -7,23 +8,35 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.View;
 
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.datamodel.Event;
 import com.example.rovermore.planmad.fragments.FavFragment;
 import com.example.rovermore.planmad.fragments.MainFragment;
 import com.example.rovermore.planmad.fragments.TodayFragment;
+import com.example.rovermore.planmad.network.NetworkUtils;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnDataPass,
         FavFragment.OnDataPassFromFavFragment,
-        TodayFragment.OnDataPassFromTodayFragment{
+        TodayFragment.OnDataPassFromTodayFragment,
+        OnMapReadyCallback {
 
-    private TextView mTextMessage;
+    private final static int ASYNC_TASK_INT = 103;
 
+    private View linearLayoutMapView;
     private FragmentManager fragmentManager;
     private Parcelable mListState, mFavListState, mTodayListState;
     private List<Event> eventList, todayEventList;
@@ -48,12 +61,17 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
                     setUpTodayFragment();
                     return true;
                 case R.id.navigation_map:
-
+                    if (eventList == null){
+                        new FetchEvents().execute(ASYNC_TASK_INT);
+                    } else {
+                        setUpMapFragment();
+                    }
                     return true;
             }
             return false;
         }
     };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +79,15 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         setContentView(R.layout.activity_main);
 
         fragmentManager = getSupportFragmentManager();
-        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        linearLayoutMapView = (View) findViewById(R.id.map_linear_layout);
 
         setUpHomeFragment();
     }
 
     private void setUpHomeFragment() {
+        linearLayoutMapView.setVisibility(View.INVISIBLE);
         MainFragment mainFragment = new MainFragment();
         if (isDataPassedFromMainFragment) {
             Bundle bundle = new Bundle();
@@ -82,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
     }
 
     private void setUpFavFragment(){
+        linearLayoutMapView.setVisibility(View.INVISIBLE);
         FavFragment favFragment = new FavFragment();
         if (isDataPassedFromFavFragment){
             Bundle bundle = new Bundle();
@@ -94,8 +114,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
     }
 
     private void setUpTodayFragment(){
+        linearLayoutMapView.setVisibility(View.INVISIBLE);
         TodayFragment todayFragment = new TodayFragment();
-        if (isDataPassedFromTodayFragment){
+        if (isDataPassedFromTodayFragment || todayEventList!=null){
             Bundle bundle = new Bundle();
             bundle.putParcelable(MainFragment.LIST_STATE_KEY, mTodayListState);
             bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) todayEventList);
@@ -104,6 +125,14 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         fragmentManager.beginTransaction()
                 .replace(R.id.main_frame_layout, todayFragment)
                 .commit();
+    }
+
+    private void setUpMapFragment() {
+        linearLayoutMapView.setVisibility(View.VISIBLE);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.big_map);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -124,5 +153,49 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         this.mTodayListState = mListState;
         this.todayEventList = eventList;
         isDataPassedFromTodayFragment = true;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        for(int i = 0;i<todayEventList.size();i++) {
+            Event event = todayEventList.get(i);
+            LatLng eventLocation = new LatLng(event.getLatitude(), event.getLongitude());
+            googleMap.addMarker(new MarkerOptions().position(eventLocation)
+                    .title(event.getTitle()));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLocation,10.0f));
+        }
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().setZoomGesturesEnabled(true);
+        googleMap.getUiSettings().setScrollGesturesEnabled(true);
+        googleMap.getUiSettings().setTiltGesturesEnabled(true);
+        googleMap.getUiSettings().setScrollGesturesEnabledDuringRotateOrZoom(true);
+
+
+    }
+
+    private class FetchEvents extends AsyncTask<Integer, Void, List<Event>> {
+
+        @Override
+        protected List<Event> doInBackground(Integer... integers) {
+            List<Event> eventList = new ArrayList<>();
+            List<Event> todayEventList = new ArrayList<>();
+            try {
+                String jsonResponse = NetworkUtils.getResponseFromHttpUrl();
+                eventList = NetworkUtils.parseJson(jsonResponse);
+                todayEventList = NetworkUtils.getTodayList(eventList);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return todayEventList;
+        }
+
+        @Override
+        protected void onPostExecute(List<Event> events) {
+            super.onPostExecute(events);
+            todayEventList = events;
+            setUpMapFragment();
+        }
     }
 }
