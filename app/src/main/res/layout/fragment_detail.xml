@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_detail_favoritos"
                 android:background="@drawable/rounded_background"
-                android:text="@string/favoritos"
+                android:text="@string/title_top_fav"
                 android:layout_marginTop="30dp"
                 android:layout_gravity="center"
                 android:textSize="28sp"

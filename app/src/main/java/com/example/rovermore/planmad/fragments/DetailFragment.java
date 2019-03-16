@@ -1,9 +1,14 @@
 package com.example.rovermore.planmad.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -14,6 +19,10 @@ import com.example.rovermore.planmad.database.AppDatabase;
 import com.example.rovermore.planmad.datamodel.Event;
 import com.example.rovermore.planmad.threads.AppExecutors;
 
+import java.util.Calendar;
+
+//import java.util.Calendar;
+//import java.util.TimeZone;
 
 public class DetailFragment extends Fragment {
 
@@ -41,6 +50,7 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -50,6 +60,8 @@ public class DetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         mDb = AppDatabase.getInstance(getContext());
+
+        getActivity().setTitle(R.string.title_top_fav);
 
         if(getArguments()!=null){
             event = getArguments().getParcelable(MainFragment.EVENT_KEY_NAME);
@@ -110,7 +122,7 @@ public class DetailFragment extends Fragment {
 
                 if(eventFromDatabase!=null){
                     isEventSavedInFav = true;
-                    Log.d(TAG,"EL ID EN BBDD DEL EVENTO ES " + eventFromDatabase.getIdDatabase());
+                    Log.d(TAG,"The Event id in DDBB is: " + eventFromDatabase.getIdDatabase());
                 } else {
                     isEventSavedInFav = false;
                 }
@@ -119,5 +131,88 @@ public class DetailFragment extends Fragment {
 
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_detail, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        if(!isEventSavedInFav){
+            MenuItem deleteMenuItem = menu.findItem(R.id.delete_event);
+            deleteMenuItem.setVisible(false);
+            getActivity().setTitle(R.string.app_name);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int itemId = item.getItemId();
+        switch (itemId){
+            case R.id.delete_event:
+                //delete event from database
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDb.eventDao().deleteEvent(event);
+                    }
+                });
+                Toast.makeText(getContext(),"Evento borrado de favoritos", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+                return true;
+            case R.id.share_event:
+                //create a share intent
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT,
+                        event.getTitle() +
+                                " - " + event.getDescription() +
+                                " - " + event.getDtstart());
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
+                return true;
+            case R.id.add_to_calendar:
+                addToCalendar();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void addToCalendar() {
+
+        long startMillis;
+        long endMillis;
+
+        Calendar beginTime = Calendar.getInstance();
+        beginTime.setTime(event.getDtstart());
+        startMillis = beginTime.getTimeInMillis();
+
+        Calendar endTime = Calendar.getInstance();
+        endTime.setTime(event.getDtend());
+        endMillis = endTime.getTimeInMillis();
+
+        Intent intent = new Intent(Intent.ACTION_INSERT);
+        intent.setData(CalendarContract.Events.CONTENT_URI);
+
+        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startMillis);
+        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,endMillis);
+        intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false);
+        intent.putExtra(CalendarContract.Events.TITLE, event.getTitle());
+        intent.putExtra(CalendarContract.Events.DESCRIPTION, event.getDescription());
+        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, event.getEventLocation());
+
+        String recurString = "FREQ=WEEKLY;COUNT=10;WKST=SU;BYDAY=TU,TH”";
+        intent.putExtra(CalendarContract.Events.RRULE, recurString);
+
+        // Making it private and shown as busy
+        intent.putExtra(CalendarContract.Events.ACCESS_LEVEL, CalendarContract.Events.ACCESS_PRIVATE);
+        intent.putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
+
+        startActivity(intent);
+    }
 }

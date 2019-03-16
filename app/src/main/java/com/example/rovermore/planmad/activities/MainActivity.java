@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
     private void setUpHomeFragment() {
         linearLayoutMapView.setVisibility(View.INVISIBLE);
+        setTitle(R.string.title_top_home);
         MainFragment mainFragment = new MainFragment();
         if (isDataPassedFromMainFragment) {
             Bundle bundle = new Bundle();
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
     private void setUpFavFragment(){
         linearLayoutMapView.setVisibility(View.INVISIBLE);
+        setTitle(R.string.title_top_fav);
         FavFragment favFragment = new FavFragment();
         if (isDataPassedFromFavFragment){
             Bundle bundle = new Bundle();
@@ -118,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
     private void setUpTodayFragment(){
         linearLayoutMapView.setVisibility(View.INVISIBLE);
+        setTitle(R.string.title_top_today);
         TodayFragment todayFragment = new TodayFragment();
         if (isDataPassedFromTodayFragment || todayEventList!=null){
             Bundle bundle = new Bundle();
@@ -132,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
     private void setUpMapFragment() {
         linearLayoutMapView.setVisibility(View.VISIBLE);
-
+        setTitle(R.string.title_top_map);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.big_map);
         mapFragment.getMapAsync(this);
@@ -160,21 +163,23 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        for(int i = 0;i<todayEventList.size();i++) {
-            Event event = todayEventList.get(i);
-            LatLng eventLocation = new LatLng(event.getLatitude(), event.getLongitude());
-            Marker marker = googleMap.addMarker(new MarkerOptions().position(eventLocation)
-                    .title(event.getTitle()));
-            marker.setTag(event);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLocation,10.0f));
-        }
-        googleMap.getUiSettings().setZoomControlsEnabled(true);
-        googleMap.getUiSettings().setZoomGesturesEnabled(true);
-        googleMap.getUiSettings().setScrollGesturesEnabled(true);
-        googleMap.getUiSettings().setTiltGesturesEnabled(true);
-        googleMap.getUiSettings().setScrollGesturesEnabledDuringRotateOrZoom(true);
+        if (todayEventList!=null) {
+            for (int i = 0; i < todayEventList.size(); i++) {
+                Event event = todayEventList.get(i);
+                LatLng eventLocation = new LatLng(event.getLatitude(), event.getLongitude());
+                Marker marker = googleMap.addMarker(new MarkerOptions().position(eventLocation)
+                        .title(event.getTitle()));
+                marker.setTag(event);
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLocation, 10.0f));
+            }
+            googleMap.getUiSettings().setZoomControlsEnabled(true);
+            googleMap.getUiSettings().setZoomGesturesEnabled(true);
+            googleMap.getUiSettings().setScrollGesturesEnabled(true);
+            googleMap.getUiSettings().setTiltGesturesEnabled(true);
+            googleMap.getUiSettings().setScrollGesturesEnabledDuringRotateOrZoom(true);
 
-        googleMap.setOnInfoWindowClickListener(this);
+            googleMap.setOnInfoWindowClickListener(this);
+        }
 
     }
 
