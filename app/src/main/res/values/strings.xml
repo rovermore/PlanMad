@@ -14,5 +14,28 @@
 
     <string name="delete">Borrar</string>
     <string name="share">Compartir</string>
+    <string name="notification">Activar notificaciones</string>
     <string name="add_to_calendar">Añadir al calendario</string>
+
+    <string name="month_prompt">Elige un mes</string>
+    <string name="filter_prompt">Filtrar</string>
+
+    <string-array name="month_array">
+        <item>Enero</item>
+        <item>Febrero</item>
+        <item>Marzo</item>
+        <item>Abril</item>
+        <item>Mayo</item>
+        <item>Junio</item>
+        <item>Julio</item>
+        <item>Agosto</item>
+        <item>Septiembre</item>
+        <item>Octubre</item>
+        <item>Noviembre</item>
+        <item>Diciembre</item>
+    </string-array>
+
+    <string name="main_notification_channel_name">Primary</string>
+    <string name="today_reminder_notification_title">Eventos Hoy</string>
+    <string name="today_reminder_notification_body">Un vistazo rápido a los eventos mas interesantes que se celebran hoy en Madrid</string>
 </resources>

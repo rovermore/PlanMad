@@ -118,7 +118,7 @@ public class NetworkUtils {
             }
 
             Event event = new Event(hash, title, description, price, dtstart, dtend,recurrenceDays,
-                    recurrenceFrequency, eventLocation, latitude, longitude);
+                    recurrenceFrequency, eventLocation, latitude, longitude, false);
 
             Log.v(TAG, "title " + title);
             Log.v(TAG, "id " + hash);
@@ -187,6 +187,7 @@ public class NetworkUtils {
             if (eventDateText.equals(currentDateText)){
                 todayEventList.add(event);
             }
+
         }
 
         return todayEventList;

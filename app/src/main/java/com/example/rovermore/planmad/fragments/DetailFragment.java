@@ -21,8 +21,6 @@ import com.example.rovermore.planmad.threads.AppExecutors;
 
 import java.util.Calendar;
 
-//import java.util.Calendar;
-//import java.util.TimeZone;
 
 public class DetailFragment extends Fragment {
 
@@ -143,6 +141,8 @@ public class DetailFragment extends Fragment {
 
         if(!isEventSavedInFav){
             MenuItem deleteMenuItem = menu.findItem(R.id.delete_event);
+            MenuItem notificationMenuItem = menu.findItem(R.id.notification_event);
+            notificationMenuItem.setVisible(false);
             deleteMenuItem.setVisible(false);
             getActivity().setTitle(R.string.app_name);
         }
@@ -178,6 +178,22 @@ public class DetailFragment extends Fragment {
             case R.id.add_to_calendar:
                 addToCalendar();
                 return true;
+
+            case R.id.notification_event:
+                //Modify event in ddbb to set value true or false
+                if(event.getNotification()){
+                    event.setNotification(false);
+                    Toast.makeText(getContext(),"Notificaciones desactivadas para el evento",Toast.LENGTH_SHORT).show();
+                } else {
+                    event.setNotification(true);
+                    Toast.makeText(getContext(),"Notificaciones activadas para el evento",Toast.LENGTH_SHORT).show();
+                }
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDb.eventDao().updateEvent(event);
+                    }
+                });
         }
 
         return super.onOptionsItemSelected(item);

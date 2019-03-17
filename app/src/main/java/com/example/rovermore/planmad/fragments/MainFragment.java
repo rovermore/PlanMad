@@ -6,11 +6,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Spinner;
 
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.activities.DetailActivity;
@@ -22,7 +25,10 @@ import com.example.rovermore.planmad.network.NetworkUtils;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -33,6 +39,11 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     private MainAdapter eventListAdapter;
     private Parcelable mListState;
     private List<Event> eventList;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean isFilteredByMonth;
+    private Spinner monthSpinner;
+    private Button filterButton;
+
     private Context context;
 
     private OnDataPass onDataPass;
@@ -71,6 +82,45 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(eventListAdapter);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
+
+        monthSpinner = rootView.findViewById(R.id.spinner_month);
+        filterButton = rootView.findViewById(R.id.button_filter_month);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<Event> monthEventList = new ArrayList<>();
+                DateFormat df = new SimpleDateFormat("MM");
+                List<Event> metodEventList = eventList;
+                metodEventList.size();
+                monthEventList.size();
+                for (int i = 0; i < metodEventList.size(); i++) {
+                    Event event = eventList.get(i);
+                    Date eventDate = event.getDtstart();
+                    String eventDateText = df.format(eventDate);
+                    int eventDateInt = Integer.parseInt(eventDateText);
+                    if (eventDateInt == monthSpinner.getSelectedItemPosition() + 1) {
+                        monthEventList.add(event);
+                    } else if (eventDateInt == monthSpinner.getSelectedItemPosition() + 2) {
+                        break;
+                    }
+                }
+                if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
+                eventListAdapter.setEventList(monthEventList);
+                metodEventList.size();
+                isFilteredByMonth = true;
+                new FetchEvents().execute(ASYNC_TASK_INT);
+
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new FetchEvents().execute(ASYNC_TASK_INT);
+            }
+        });
 
         if(getArguments()!=null){
             mListState = getArguments().getParcelable(LIST_STATE_KEY);
@@ -114,8 +164,12 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         protected void onPostExecute(List<Event> events) {
             super.onPostExecute(events);
             if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
-            eventListAdapter.setEventList(events);
+            if(!isFilteredByMonth){
+                eventListAdapter.setEventList(events);
+            }
             eventList = events;
+            swipeRefreshLayout.setRefreshing(false);
+            isFilteredByMonth = false;
         }
     }
 

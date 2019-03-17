@@ -17,6 +17,7 @@ import com.example.rovermore.planmad.fragments.FavFragment;
 import com.example.rovermore.planmad.fragments.MainFragment;
 import com.example.rovermore.planmad.fragments.TodayFragment;
 import com.example.rovermore.planmad.network.NetworkUtils;
+import com.example.rovermore.planmad.sync.ReminderUtilities;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -86,7 +87,19 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         linearLayoutMapView = (View) findViewById(R.id.map_linear_layout);
 
-        setUpHomeFragment();
+        ReminderUtilities.scheduleTodayReminder(this);
+
+        String todayNotificationFragment = getIntent().getStringExtra("NotificationFragment");
+
+        //Checks if activity is started by a notification
+        //and sets the corresponding fragment
+        if (todayNotificationFragment != null) {
+            if (todayNotificationFragment.equals("todayNotificationFragment")){
+                setUpTodayFragment();
+            }
+        } else {
+            setUpHomeFragment();
+        }
     }
 
     private void setUpHomeFragment() {
