@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.database.AppDatabase;
 import com.example.rovermore.planmad.datamodel.Event;
+import com.example.rovermore.planmad.sync.ReminderUtilities;
 import com.example.rovermore.planmad.threads.AppExecutors;
 
 import java.util.Calendar;
@@ -184,8 +185,10 @@ public class DetailFragment extends Fragment {
                 if(event.getNotification()){
                     event.setNotification(false);
                     Toast.makeText(getContext(),"Notificaciones desactivadas para el evento",Toast.LENGTH_SHORT).show();
+                    //TODO: cancel notifications
                 } else {
                     event.setNotification(true);
+                    ReminderUtilities.scheduleEventNotification(getContext(), event);
                     Toast.makeText(getContext(),"Notificaciones activadas para el evento",Toast.LENGTH_SHORT).show();
                 }
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
@@ -194,6 +197,10 @@ public class DetailFragment extends Fragment {
                         mDb.eventDao().updateEvent(event);
                     }
                 });
+
+            /*case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(getActivity());
+                return true;*/
         }
 
         return super.onOptionsItemSelected(item);

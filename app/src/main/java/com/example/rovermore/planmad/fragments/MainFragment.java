@@ -40,7 +40,6 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     private Parcelable mListState;
     private List<Event> eventList;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private boolean isFilteredByMonth;
     private Spinner monthSpinner;
     private Button filterButton;
 
@@ -92,25 +91,17 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             public void onClick(View view) {
                 List<Event> monthEventList = new ArrayList<>();
                 DateFormat df = new SimpleDateFormat("MM");
-                List<Event> metodEventList = eventList;
-                metodEventList.size();
-                monthEventList.size();
-                for (int i = 0; i < metodEventList.size(); i++) {
+                for (int i = 0; i < eventList.size(); i++) {
                     Event event = eventList.get(i);
                     Date eventDate = event.getDtstart();
                     String eventDateText = df.format(eventDate);
                     int eventDateInt = Integer.parseInt(eventDateText);
                     if (eventDateInt == monthSpinner.getSelectedItemPosition() + 1) {
                         monthEventList.add(event);
-                    } else if (eventDateInt == monthSpinner.getSelectedItemPosition() + 2) {
-                        break;
                     }
                 }
                 if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
                 eventListAdapter.setEventList(monthEventList);
-                metodEventList.size();
-                isFilteredByMonth = true;
-                new FetchEvents().execute(ASYNC_TASK_INT);
 
             }
         });
@@ -163,13 +154,11 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         @Override
         protected void onPostExecute(List<Event> events) {
             super.onPostExecute(events);
-            if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
-            if(!isFilteredByMonth){
-                eventListAdapter.setEventList(events);
-            }
+            if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
+            eventListAdapter.setEventList(events);
             eventList = events;
             swipeRefreshLayout.setRefreshing(false);
-            isFilteredByMonth = false;
+
         }
     }
 

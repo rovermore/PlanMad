@@ -12,6 +12,7 @@ import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.datamodel.Event;
 import com.example.rovermore.planmad.network.NetworkUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
 
     public MainAdapter(@NonNull Context context, List<Event> eventList, onEventClickListener eventClickListener) {
         this.context = context;
-        this.eventList = eventList;
+        //this.eventList = new ArrayList<>();
         this.eventClickListener = eventClickListener;
     }
 
@@ -99,7 +100,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
     }
 
     public void setEventList(List<Event> eventList){
-        this.eventList = eventList;
+        //Creating a new ArrayList to be independent from main activity eventList
+        this.eventList = new ArrayList<>(eventList);
         notifyDataSetChanged();
     }
 

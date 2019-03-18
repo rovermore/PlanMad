@@ -30,6 +30,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
         event = getIntent().getParcelableExtra(MainFragment.EVENT_KEY_NAME);
 
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         fragmentManager = getSupportFragmentManager();
 
         Bundle bundle = new Bundle();

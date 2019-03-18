@@ -1,8 +1,12 @@
 package com.example.rovermore.planmad.sync;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 
+import com.example.rovermore.planmad.datamodel.Event;
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.Driver;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
@@ -18,8 +22,8 @@ public class ReminderUtilities {
      * Interval at which to remind the user to drink water. Use TimeUnit for convenience, rather
      * than writing out a bunch of multiplication ourselves and risk making a silly mistake.
      */
-    private static final int REMINDER_INTERVAL_HOURS = 24;
-    private static final int REMINDER_INTERVAL_SECONDS = (int) (TimeUnit.HOURS.toSeconds(REMINDER_INTERVAL_HOURS));
+    private static final int REMINDER_INTERVAL_MINUTES = 120;
+    private static final int REMINDER_INTERVAL_SECONDS = (int) (TimeUnit.MINUTES.toSeconds(REMINDER_INTERVAL_MINUTES));
     private static final int SYNC_FLEXTIME_MINUTES = 15;
     private static final int SYNC_FLEXTIME_SECONDS = (int) (TimeUnit.MINUTES.toSeconds(SYNC_FLEXTIME_MINUTES));
 
@@ -62,7 +66,7 @@ public class ReminderUtilities {
                  */
                 .setRecurring(true)
                 /*
-                 * We want the reminders to happen every 15 minutes or so. The first argument for
+                 * We want the reminders to happen every 24 hours or so. The first argument for
                  * Trigger class's static executionWindow method is the start of the time frame
                  * when the
                  * job should be performed. The second argument is the latest point in time at
@@ -85,5 +89,15 @@ public class ReminderUtilities {
 
         /* The job has been initialized */
         sInitialized = true;
+    }
+
+    public static void scheduleEventNotification (Context context, Event event){
+        Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+        notificationIntent.putExtra(NotificationReceiver.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(NotificationReceiver.EVENT_NOTIFICATION, event);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, event.getDtend().getTime(), pendingIntent);
     }
 }
