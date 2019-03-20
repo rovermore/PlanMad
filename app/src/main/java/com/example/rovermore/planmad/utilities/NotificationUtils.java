@@ -1,5 +1,6 @@
 package com.example.rovermore.planmad.utilities;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,8 +11,10 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.example.rovermore.planmad.R;
+import com.example.rovermore.planmad.activities.DetailActivity;
 import com.example.rovermore.planmad.activities.MainActivity;
 import com.example.rovermore.planmad.datamodel.Event;
+import com.example.rovermore.planmad.fragments.MainFragment;
 
 public class NotificationUtils {
 
@@ -63,18 +66,9 @@ public class NotificationUtils {
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    public static void eventNotification (Context context, Event event){
+    public static Notification eventNotification (Context context, Event event){
 
-        NotificationManager notificationManager = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel mChannel = new NotificationChannel(
-                    EVENT_NOTIFICATION_CHANNEL_ID,
-                    context.getString(R.string.main_notification_channel_name),
-                    NotificationManager.IMPORTANCE_HIGH);
-            notificationManager.createNotificationChannel(mChannel);
-        }
-
+        PendingIntent pendingIntent = eventContentIntent(context, event);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context,EVENT_NOTIFICATION_CHANNEL_ID)
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -82,13 +76,23 @@ public class NotificationUtils {
                 .setContentText(event.getDescription())
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(
                         event.getDescription()))
-                .setContentIntent(contentIntent(context))
+                .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
                 && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             notificationBuilder.setPriority(NotificationCompat.PRIORITY_HIGH);
         }
-        notificationManager.notify(EVENT_REMINDER_NOTIFICATION_ID, notificationBuilder.build());
+        return notificationBuilder.build();
+    }
+
+    private static PendingIntent eventContentIntent(Context context, Event event) {
+        Intent startActivityIntent = new Intent(context, DetailActivity.class);
+        startActivityIntent.putExtra(MainFragment.EVENT_KEY_NAME,event);
+        return PendingIntent.getActivity(
+                context,
+                TODAY_NOTIFICATION_PENDING_INTENT_ID,
+                startActivityIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

@@ -101,8 +101,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
 
     public void setEventList(List<Event> eventList){
         //Creating a new ArrayList to be independent from main activity eventList
-        this.eventList = new ArrayList<>(eventList);
-        notifyDataSetChanged();
+        if(eventList!=null) {
+            this.eventList = new ArrayList<>(eventList);
+            notifyDataSetChanged();
+        }
     }
 
     public List<Event> getEventList(){

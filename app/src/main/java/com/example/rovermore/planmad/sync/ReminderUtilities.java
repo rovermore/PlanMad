@@ -5,8 +5,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.rovermore.planmad.datamodel.Event;
+import com.example.rovermore.planmad.utilities.NotificationUtils;
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.Driver;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
@@ -18,10 +20,14 @@ import com.firebase.jobdispatcher.Trigger;
 import java.util.concurrent.TimeUnit;
 
 public class ReminderUtilities {
+
+    private final static String TAG = ReminderUtilities.class.getSimpleName();
     /*
      * Interval at which to remind the user to drink water. Use TimeUnit for convenience, rather
      * than writing out a bunch of multiplication ourselves and risk making a silly mistake.
      */
+    private static final int HOUR_BEFORE_EVENT = 1;
+    private static final int ONE_HOUR_IN_MILISECONDS_BEFORE_EVENT = (int) (TimeUnit.HOURS.toMillis(HOUR_BEFORE_EVENT));
     private static final int REMINDER_INTERVAL_MINUTES = 120;
     private static final int REMINDER_INTERVAL_SECONDS = (int) (TimeUnit.MINUTES.toSeconds(REMINDER_INTERVAL_MINUTES));
     private static final int SYNC_FLEXTIME_MINUTES = 15;
@@ -94,10 +100,16 @@ public class ReminderUtilities {
     public static void scheduleEventNotification (Context context, Event event){
         Intent notificationIntent = new Intent(context, NotificationReceiver.class);
         notificationIntent.putExtra(NotificationReceiver.NOTIFICATION_ID, 1);
-        notificationIntent.putExtra(NotificationReceiver.EVENT_NOTIFICATION, event);
+        notificationIntent.putExtra(NotificationReceiver.EVENT_NOTIFICATION, NotificationUtils.eventNotification(context,event));
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        //long futureInMillis = SystemClock.elapsedRealtime() + 10000;
+        long futureInMillis = event.getDtend().getTime() - ONE_HOUR_IN_MILISECONDS_BEFORE_EVENT;
+        Log.d(TAG,"The event date is: " + futureInMillis);
+
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, event.getDtend().getTime(), pendingIntent);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+
     }
+
 }

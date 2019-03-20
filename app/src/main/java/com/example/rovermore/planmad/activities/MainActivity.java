@@ -89,15 +89,15 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
         ReminderUtilities.scheduleTodayReminder(this);
 
-        String todayNotificationFragment = getIntent().getStringExtra("NotificationFragment");
+        String notificationFragment = getIntent().getStringExtra("NotificationFragment");
 
         //Checks if activity is started by a notification
         //and sets the corresponding fragment
-        if (todayNotificationFragment != null) {
-            if (todayNotificationFragment.equals("todayNotificationFragment")){
+        if (notificationFragment != null) {
+            if (notificationFragment.equals("todayNotificationFragment")){
                 setUpTodayFragment();
             }
-        } else {
+        } else  {
             setUpHomeFragment();
         }
     }
