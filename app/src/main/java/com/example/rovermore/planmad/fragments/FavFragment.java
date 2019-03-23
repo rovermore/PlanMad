@@ -121,7 +121,6 @@ public class FavFragment extends Fragment implements MainAdapter.onEventClickLis
                 Log.d(TAG,"Updating list of events from LiveData in ViewModel");
                 if(eventList != null && !eventList.isEmpty()){
                     createUI(eventList);
-                    clickedEvent = eventList.get(0);
                     onDataPassFromFavFragment.onDataPassFromFavFragment(mListState, clickedEvent);
                 } else {
                     Toast.makeText(getContext(),"No se encontraron eventos favoritos",Toast.LENGTH_LONG).show();

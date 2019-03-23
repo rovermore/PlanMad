@@ -170,7 +170,6 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             eventListAdapter.setEventList(events);
             eventList = events;
             swipeRefreshLayout.setRefreshing(false);
-            clickedEvent = eventList.get(0);
             onDataPass.onDataPass(mListState, eventList, clickedEvent);
         }
     }

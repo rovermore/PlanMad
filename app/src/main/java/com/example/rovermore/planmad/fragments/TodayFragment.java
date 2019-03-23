@@ -131,7 +131,6 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
             eventListAdapter.setEventList(events);
             eventList = events;
             swipeRefreshLayout.setRefreshing(false);
-            clickedEvent = eventList.get(0);
             onDataPassFromTodayFragment.onDataPassFromTodayFragment(mListState, eventList, clickedEvent);
         }
     }
