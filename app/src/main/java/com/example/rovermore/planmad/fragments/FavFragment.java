@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.activities.DetailActivity;
+import com.example.rovermore.planmad.activities.MainActivity;
 import com.example.rovermore.planmad.adapters.MainAdapter;
 import com.example.rovermore.planmad.database.AppDatabase;
 import com.example.rovermore.planmad.datamodel.Event;
@@ -37,11 +38,13 @@ public class FavFragment extends Fragment implements MainAdapter.onEventClickLis
     private MainAdapter eventListAdapter;
     private OnDataPassFromFavFragment onDataPassFromFavFragment;
     private Parcelable mListState;
+    private Event clickedEvent;
+    private boolean mTwoPane;
 
     private AppDatabase mDb;
 
     public interface OnDataPassFromFavFragment {
-        void onDataPassFromFavFragment(Parcelable mListState);
+        void onDataPassFromFavFragment(Parcelable mListState, Event event);
     }
 
     public FavFragment() {}
@@ -73,8 +76,11 @@ public class FavFragment extends Fragment implements MainAdapter.onEventClickLis
         setUpFavViewModel();
 
         if(getArguments()!=null) {
+            mTwoPane = getArguments().getBoolean(MainActivity.TWO_PANE_KEY);
             mListState = getArguments().getParcelable(MainFragment.LIST_STATE_KEY);
-            layoutManager.onRestoreInstanceState(mListState);
+            if (mListState!=null){
+                layoutManager.onRestoreInstanceState(mListState);
+            }
         }
 
         /*
@@ -115,6 +121,8 @@ public class FavFragment extends Fragment implements MainAdapter.onEventClickLis
                 Log.d(TAG,"Updating list of events from LiveData in ViewModel");
                 if(eventList != null && !eventList.isEmpty()){
                     createUI(eventList);
+                    clickedEvent = eventList.get(0);
+                    onDataPassFromFavFragment.onDataPassFromFavFragment(mListState, clickedEvent);
                 } else {
                     Toast.makeText(getContext(),"No se encontraron eventos favoritos",Toast.LENGTH_LONG).show();
                 }
@@ -131,16 +139,20 @@ public class FavFragment extends Fragment implements MainAdapter.onEventClickLis
 
     @Override
     public void onEventClicked(Event event) {
-        Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(MainFragment.EVENT_KEY_NAME, event);
-        startActivity(intent);
+        if(mTwoPane) {
+            this.clickedEvent = event;
+            onDataPassFromFavFragment.onDataPassFromFavFragment(mListState, clickedEvent);
+        } else {
+            Intent intent = new Intent(getActivity(), DetailActivity.class);
+            intent.putExtra(MainFragment.EVENT_KEY_NAME, event);
+            startActivity(intent);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
         mListState = layoutManager.onSaveInstanceState();
-        onDataPassFromFavFragment.onDataPassFromFavFragment(mListState);
+        onDataPassFromFavFragment.onDataPassFromFavFragment(mListState, clickedEvent);
     }
 }

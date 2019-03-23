@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.datamodel.Event;
+import com.example.rovermore.planmad.fragments.DetailFragment;
 import com.example.rovermore.planmad.fragments.FavFragment;
 import com.example.rovermore.planmad.fragments.MainFragment;
 import com.example.rovermore.planmad.fragments.TodayFragment;
@@ -40,13 +41,19 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
     private final static int ASYNC_TASK_INT = 103;
 
+    public static final String TWO_PANE_KEY = "two-pane";
+    public static final String DETAIL_FRAGMENT_ID = "detail-fragment";
+
     private View linearLayoutMapView;
     private FragmentManager fragmentManager;
     private Parcelable mListState, mFavListState, mTodayListState;
     private List<Event> eventList, todayEventList;
+    private Event mainEvent, favEvent, todayEvent;
     private boolean isDataPassedFromMainFragment = false;
     private boolean isDataPassedFromFavFragment = false;
     private boolean isDataPassedFromTodayFragment = false;
+
+    private DetailFragment detailFragment;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -65,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
                     setUpTodayFragment();
                     return true;
                 case R.id.navigation_map:
-                    if (eventList == null){
+                    if (eventList == null) {
                         new FetchEvents().execute(ASYNC_TASK_INT);
                     } else {
                         setUpMapFragment();
@@ -94,10 +101,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         //Checks if activity is started by a notification
         //and sets the corresponding fragment
         if (notificationFragment != null) {
-            if (notificationFragment.equals("todayNotificationFragment")){
+            if (notificationFragment.equals("todayNotificationFragment")) {
                 setUpTodayFragment();
             }
-        } else  {
+        } else {
             setUpHomeFragment();
         }
     }
@@ -106,72 +113,144 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         linearLayoutMapView.setVisibility(View.INVISIBLE);
         setTitle(R.string.title_top_home);
         MainFragment mainFragment = new MainFragment();
-        if (isDataPassedFromMainFragment) {
+        if (findViewById(R.id.two_pane_linear_layout) != null) {
             Bundle bundle = new Bundle();
-            bundle.putParcelable(MainFragment.LIST_STATE_KEY, mListState);
-            bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) eventList);
+            bundle.putBoolean(TWO_PANE_KEY, true);
+            if (isDataPassedFromMainFragment) {
+                bundle.putParcelable(MainFragment.LIST_STATE_KEY, mListState);
+                bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) eventList);
+            }
             mainFragment.setArguments(bundle);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.two_pane_main_layout, mainFragment)
+                    .commit();
+        } else {
+            if (isDataPassedFromMainFragment) {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(TWO_PANE_KEY, false);
+                bundle.putParcelable(MainFragment.LIST_STATE_KEY, mListState);
+                bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) eventList);
+                mainFragment.setArguments(bundle);
+            }
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_frame_layout, mainFragment)
+                    .commit();
+
         }
-        fragmentManager.beginTransaction()
-                .replace(R.id.main_frame_layout, mainFragment)
-                .commit();
     }
 
-    private void setUpFavFragment(){
+
+    private void setUpFavFragment() {
         linearLayoutMapView.setVisibility(View.INVISIBLE);
         setTitle(R.string.title_top_fav);
         FavFragment favFragment = new FavFragment();
-        if (isDataPassedFromFavFragment){
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(MainFragment.LIST_STATE_KEY, mFavListState);
+        Bundle bundle = new Bundle();
+        if (findViewById(R.id.two_pane_linear_layout) != null) {
+            bundle.putBoolean(TWO_PANE_KEY, true);
+            if (isDataPassedFromFavFragment) {
+                bundle.putBoolean(TWO_PANE_KEY, true);
+                bundle.putParcelable(MainFragment.LIST_STATE_KEY, mFavListState);
+            }
             favFragment.setArguments(bundle);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.two_pane_main_layout, favFragment)
+                    .commit();
+        } else {
+            bundle.putBoolean(TWO_PANE_KEY, false);
+            if (isDataPassedFromFavFragment) {
+                bundle.putParcelable(MainFragment.LIST_STATE_KEY, mFavListState);
+                favFragment.setArguments(bundle);
+            }
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_frame_layout, favFragment)
+                    .commit();
         }
-        fragmentManager.beginTransaction()
-                .replace(R.id.main_frame_layout, favFragment)
-                .commit();
     }
+
 
     private void setUpTodayFragment(){
         linearLayoutMapView.setVisibility(View.INVISIBLE);
         setTitle(R.string.title_top_today);
         TodayFragment todayFragment = new TodayFragment();
-        if (isDataPassedFromTodayFragment || todayEventList!=null){
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(MainFragment.LIST_STATE_KEY, mTodayListState);
-            bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) todayEventList);
+        Bundle bundle = new Bundle();
+        if (findViewById(R.id.two_pane_linear_layout) != null) {
+            bundle.putBoolean(TWO_PANE_KEY, true);
+            if (isDataPassedFromTodayFragment || todayEventList != null) {
+                bundle.putParcelable(MainFragment.LIST_STATE_KEY, mTodayListState);
+                bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) todayEventList);
+            }
             todayFragment.setArguments(bundle);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.two_pane_main_layout, todayFragment)
+                    .commit();
+        } else {
+            bundle.putBoolean(TWO_PANE_KEY, false);
+            if (isDataPassedFromTodayFragment || todayEventList != null) {
+                bundle.putParcelable(MainFragment.LIST_STATE_KEY, mTodayListState);
+                bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) todayEventList);
+                todayFragment.setArguments(bundle);
+            }
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_frame_layout, todayFragment)
+                    .commit();
         }
-        fragmentManager.beginTransaction()
-                .replace(R.id.main_frame_layout, todayFragment)
-                .commit();
     }
 
     private void setUpMapFragment() {
         linearLayoutMapView.setVisibility(View.VISIBLE);
         setTitle(R.string.title_top_map);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.big_map);
-        mapFragment.getMapAsync(this);
+        if (findViewById(R.id.two_pane_linear_layout) != null){
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.two_pane_big_map);
+            mapFragment.getMapAsync(this);
+        } else {
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.big_map);
+            mapFragment.getMapAsync(this);
+        }
     }
 
     @Override
-    public void onDataPass(Parcelable mListState, List<Event> eventList) {
+    public void onDataPass(Parcelable mListState, List<Event> eventList, Event event) {
         this.mListState = mListState;
         this.eventList = eventList;
+        if (event != null && findViewById(R.id.two_pane_linear_layout) != null) {
+            this.mainEvent = event;
+            setUpTwoPaneDetailFragment(mainEvent);
+        }
         isDataPassedFromMainFragment = true;
     }
 
     @Override
-    public void onDataPassFromFavFragment(Parcelable mListState) {
+    public void onDataPassFromFavFragment(Parcelable mListState, Event event) {
         this.mFavListState = mListState;
+        if (event != null && findViewById(R.id.two_pane_linear_layout) != null) {
+            this.favEvent = event;
+            setUpTwoPaneDetailFragment(favEvent);
+        }
         isDataPassedFromFavFragment = true;
     }
 
     @Override
-    public void onDataPassFromTodayFragment(Parcelable mListState, List<Event> eventList) {
+    public void onDataPassFromTodayFragment(Parcelable mListState, List<Event> eventList, Event event) {
         this.mTodayListState = mListState;
         this.todayEventList = eventList;
+        if (event != null && findViewById(R.id.two_pane_linear_layout) != null) {
+            this.todayEvent = event;
+            setUpTwoPaneDetailFragment(todayEvent);
+        }
         isDataPassedFromTodayFragment = true;
+    }
+
+    private void setUpTwoPaneDetailFragment(Event event){
+        detailFragment = new DetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(MainFragment.EVENT_KEY_NAME, event);
+
+        detailFragment.setArguments(bundle);
+        fragmentManager.beginTransaction()
+                .replace(R.id.two_pane_detail_frame_layout, detailFragment, DETAIL_FRAGMENT_ID)
+                .commit();
     }
 
     @Override
@@ -229,4 +308,5 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
             setUpMapFragment();
         }
     }
+
 }

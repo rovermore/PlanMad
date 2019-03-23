@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.activities.DetailActivity;
+import com.example.rovermore.planmad.activities.MainActivity;
 import com.example.rovermore.planmad.adapters.MainAdapter;
 import com.example.rovermore.planmad.database.AppDatabase;
 import com.example.rovermore.planmad.datamodel.Event;
@@ -33,6 +35,9 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
     private Context context;
     private List<Event> eventList;
     private Parcelable mListState;
+    private Event clickedEvent;
+    private boolean mTwoPane;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private OnDataPassFromTodayFragment onDataPassFromTodayFragment;
 
     private AppDatabase mDb;
@@ -40,7 +45,7 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
     private final static int ASYNC_TASK_INT = 102;
 
     public interface OnDataPassFromTodayFragment {
-        void onDataPassFromTodayFragment(Parcelable mListState, List<Event> eventList);
+        void onDataPassFromTodayFragment(Parcelable mListState, List<Event> eventList, Event event);
     }
 
     public TodayFragment() {}
@@ -67,11 +72,18 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(eventListAdapter);
 
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
+
         if(getArguments()!=null){
+            mTwoPane = getArguments().getBoolean(MainActivity.TWO_PANE_KEY);
             mListState = getArguments().getParcelable(MainFragment.LIST_STATE_KEY);
-            layoutManager.onRestoreInstanceState(mListState);
             eventList = getArguments().getParcelableArrayList(MainFragment.EVENT_LIST_KEY);
-            eventListAdapter.setEventList(eventList);
+            if(mListState!=null && eventList!=null) {
+                eventListAdapter.setEventList(eventList);
+                layoutManager.onRestoreInstanceState(mListState);
+            } else {
+                new FetchEvents().execute(ASYNC_TASK_INT);
+            }
 
         } else {
 
@@ -83,9 +95,14 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
 
     @Override
     public void onEventClicked(Event event) {
-        Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(MainFragment.EVENT_KEY_NAME, event);
-        startActivity(intent);
+        if(mTwoPane) {
+            this.clickedEvent = event;
+            onDataPassFromTodayFragment.onDataPassFromTodayFragment(mListState, eventList, clickedEvent);
+        } else {
+            Intent intent = new Intent(getActivity(), DetailActivity.class);
+            intent.putExtra(MainFragment.EVENT_KEY_NAME, event);
+            startActivity(intent);
+        }
     }
 
 
@@ -113,6 +130,9 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
             if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
             eventListAdapter.setEventList(events);
             eventList = events;
+            swipeRefreshLayout.setRefreshing(false);
+            clickedEvent = eventList.get(0);
+            onDataPassFromTodayFragment.onDataPassFromTodayFragment(mListState, eventList, clickedEvent);
         }
     }
 
@@ -120,6 +140,6 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
     public void onPause() {
         super.onPause();
         mListState = layoutManager.onSaveInstanceState();
-        onDataPassFromTodayFragment.onDataPassFromTodayFragment(mListState, eventList);
+        onDataPassFromTodayFragment.onDataPassFromTodayFragment(mListState, eventList, clickedEvent);
     }
 }

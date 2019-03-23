@@ -99,16 +99,16 @@ public class ReminderUtilities {
 
     public static void scheduleEventNotification (Context context, Event event){
         Intent notificationIntent = new Intent(context, NotificationReceiver.class);
-        notificationIntent.putExtra(NotificationReceiver.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(NotificationReceiver.NOTIFICATION_ID, event.getHash());
         notificationIntent.putExtra(NotificationReceiver.EVENT_NOTIFICATION, NotificationUtils.eventNotification(context,event));
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //long futureInMillis = SystemClock.elapsedRealtime() + 10000;
-        long futureInMillis = event.getDtend().getTime() - ONE_HOUR_IN_MILISECONDS_BEFORE_EVENT;
+        long futureInMillis = event.getDtstart().getTime() - ONE_HOUR_IN_MILISECONDS_BEFORE_EVENT;
         Log.d(TAG,"The event date is: " + futureInMillis);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
 
     }
 

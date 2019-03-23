@@ -17,6 +17,7 @@ import android.widget.Spinner;
 
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.activities.DetailActivity;
+import com.example.rovermore.planmad.activities.MainActivity;
 import com.example.rovermore.planmad.adapters.MainAdapter;
 import com.example.rovermore.planmad.database.AppDatabase;
 import com.example.rovermore.planmad.datamodel.Event;
@@ -39,10 +40,11 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     private MainAdapter eventListAdapter;
     private Parcelable mListState;
     private List<Event> eventList;
+    private Event clickedEvent;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Spinner monthSpinner;
     private Button filterButton;
-
+    private boolean mTwoPane;
     private Context context;
 
     private OnDataPass onDataPass;
@@ -55,7 +57,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     public static final String EVENT_LIST_KEY = "data_state";
 
     public interface OnDataPass {
-        void onDataPass(Parcelable mListState, List<Event> eventList);
+        void onDataPass(Parcelable mListState, List<Event> eventList, Event event);
     }
 
     public MainFragment() {}
@@ -114,10 +116,15 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         });
 
         if(getArguments()!=null){
+            mTwoPane = getArguments().getBoolean(MainActivity.TWO_PANE_KEY);
             mListState = getArguments().getParcelable(LIST_STATE_KEY);
-            layoutManager.onRestoreInstanceState(mListState);
             eventList = getArguments().getParcelableArrayList(EVENT_LIST_KEY);
-            eventListAdapter.setEventList(eventList);
+            if(mListState!=null && eventList!=null) {
+                eventListAdapter.setEventList(eventList);
+                layoutManager.onRestoreInstanceState(mListState);
+            } else {
+                new FetchEvents().execute(ASYNC_TASK_INT);
+            }
 
         } else {
 
@@ -129,9 +136,14 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
 
     @Override
     public void onEventClicked(Event event) {
-        Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(EVENT_KEY_NAME, event);
-        startActivity(intent);
+        if(mTwoPane){
+            this.clickedEvent = event;
+            onDataPass.onDataPass(mListState, eventList, clickedEvent);
+        } else {
+            Intent intent = new Intent(getActivity(), DetailActivity.class);
+            intent.putExtra(EVENT_KEY_NAME, event);
+            startActivity(intent);
+        }
     }
 
 
@@ -158,7 +170,8 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             eventListAdapter.setEventList(events);
             eventList = events;
             swipeRefreshLayout.setRefreshing(false);
-
+            clickedEvent = eventList.get(0);
+            onDataPass.onDataPass(mListState, eventList, clickedEvent);
         }
     }
 
@@ -167,7 +180,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         super.onPause();
         // Save list state
         mListState = layoutManager.onSaveInstanceState();
-        onDataPass.onDataPass(mListState, eventList);
+        onDataPass.onDataPass(mListState, eventList, clickedEvent);
 
     }
 }
