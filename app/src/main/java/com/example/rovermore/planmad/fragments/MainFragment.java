@@ -45,6 +45,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     private Spinner monthSpinner;
     private Button filterButton;
     private boolean mTwoPane;
+    private boolean setFirstEvent;
     private Context context;
 
     private OnDataPass onDataPass;
@@ -115,6 +116,8 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             }
         });
 
+        setFirstEvent = true;
+
         if(getArguments()!=null){
             mTwoPane = getArguments().getBoolean(MainActivity.TWO_PANE_KEY);
             mListState = getArguments().getParcelable(LIST_STATE_KEY);
@@ -122,6 +125,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             if(mListState!=null && eventList!=null) {
                 eventListAdapter.setEventList(eventList);
                 layoutManager.onRestoreInstanceState(mListState);
+                setFirstEvent = false;
             } else {
                 new FetchEvents().execute(ASYNC_TASK_INT);
             }
@@ -170,6 +174,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             eventListAdapter.setEventList(events);
             eventList = events;
             swipeRefreshLayout.setRefreshing(false);
+            //if(setFirstEvent) clickedEvent = eventList.get(0);
             onDataPass.onDataPass(mListState, eventList, clickedEvent);
         }
     }
