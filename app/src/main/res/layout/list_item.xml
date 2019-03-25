@@ -19,13 +19,25 @@
         android:background="@color/colorAccent"
         style="@style/ListStyle"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tv_main_title"
         style="@style/ListStyle"
         android:textStyle="bold"
-        android:text="Concierto Liam Gallagher"/>
+        android:text="Concierto Liam Gallagher"
+        android:textSize="18sp"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -33,12 +45,15 @@
         android:id="@+id/tv_main_location"
         style="@style/ListStyle"
         android:text="Bernabeu"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_main_price"
-        style="@style/ListStyle"
-        android:text="15€"/>
+        </LinearLayout>
 
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/image_view"
+            android:scaleType="centerCrop"/>
+
+    </LinearLayout>
 
 </LinearLayout>

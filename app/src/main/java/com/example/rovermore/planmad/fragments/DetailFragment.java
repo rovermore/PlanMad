@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,9 +37,9 @@ public class DetailFragment extends Fragment {
     private TextView endDate;
     private TextView recurrenceDay;
     private TextView recurrenceFrequency;
-    private TextView price;
     private TextView description;
     private TextView fav;
+    private ImageView imageView;
 
     private boolean isEventSavedInFav;
     private Event eventFromDatabase;
@@ -76,9 +77,9 @@ public class DetailFragment extends Fragment {
         endDate = rootView.findViewById(R.id.tv_detail_date_end);
         recurrenceDay = rootView.findViewById(R.id.tv_detail_recurrence_day);
         recurrenceFrequency = rootView.findViewById(R.id.tv_detail_recurrence_frequency);
-        price = rootView.findViewById(R.id.tv_detail_price);
         description = rootView.findViewById(R.id.tv_detail_description);
         fav = rootView.findViewById(R.id.tv_detail_favoritos);
+        imageView = rootView.findViewById(R.id.detail_image_view);
 
         name.setText(event.getTitle());
         location.setText(event.getEventLocation());
@@ -86,8 +87,9 @@ public class DetailFragment extends Fragment {
         endDate.setText(String.valueOf(event.getDtend()));
         recurrenceDay.setText(event.getRecurrenceDays());
         recurrenceFrequency.setText(event.getRecurrenceFrequency());
-        price.setText(String.valueOf(event.getPrice()));
         description.setText(event.getDescription());
+
+        setImageView();
 
         checkEventInDatabase();
 
@@ -111,6 +113,68 @@ public class DetailFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void setImageView() {
+        String eventType = event.getEventType();
+
+        if(eventType != null && eventType.equals("ActividadesCalleArteUrbano")) {
+            imageView.setImageResource(R.drawable.arte_urbano);
+        }
+        if(eventType != null && eventType.equals("Campamentos") ) {
+            imageView.setImageResource(R.drawable.campamentos);
+        }
+        if(eventType != null && eventType.equals("CineActividadesAudiovisuales")){
+            imageView.setImageResource(R.drawable.cine);
+        }
+        if (eventType != null && eventType.equals("CircoMagia")) {
+            imageView.setImageResource(R.drawable.circo);
+        }
+        if (eventType != null && eventType.equals("ConcursosCertamenes")) {
+            imageView.setImageResource(R.drawable.concurso);
+        }
+        if (eventType != null && eventType.equals("ConferenciasColoquios")){
+            imageView.setImageResource(R.drawable.conference);
+        }
+        if (eventType != null && eventType.equals("CuentacuentosTite")) {
+            imageView.setImageResource(R.drawable.cuenta_cuentos);
+        }
+        if (eventType != null && eventType.equals("CuentacuentosTiteresMarionetas")) {
+            imageView.setImageResource(R.drawable.cuenta_cuentos);
+        }
+        if (eventType != null && eventType.equals("CursosTalleres")) {
+            imageView.setImageResource(R.drawable.cursos_talleres);
+        }
+        if (eventType != null && eventType.equals("DanzaBaile")) {
+            imageView.setImageResource(R.drawable.danza);
+        }
+        if (eventType != null && eventType.equals("ExcursionesItinerariosVisitas")) {
+            imageView.setImageResource(R.drawable.district);
+        }
+        if (eventType != null && eventType.equals("Exposiciones")) {
+            imageView.setImageResource(R.drawable.exposiciones);
+        }
+        if (eventType != null && eventType.equals("FiestasNavidadesReyes")) {
+            imageView.setImageResource(R.drawable.actos_religiosos);
+        }
+        if (eventType != null && eventType.equals("FiestasSemanaSanta")) {
+            imageView.setImageResource(R.drawable.actos_religiosos);
+        }
+        if (eventType != null && eventType.equals("Musica")) {
+            imageView.setImageResource(R.drawable.musica);
+        }
+        if (eventType != null && eventType.equals("ProgramacionDestacadaAgendaCultura")) {
+            imageView.setImageResource(R.drawable.exposiciones);
+        }
+        if (eventType != null && eventType.equals("RecitalesPresentacionesActosLiterarios")) {
+            imageView.setImageResource(R.drawable.teatro);
+        }
+        if (eventType != null && eventType.equals("TeatroPerformance")) {
+            imageView.setImageResource(R.drawable.teatro);
+        }
+        if (eventType == null) {
+            imageView.setImageResource(R.drawable.district);
+        }
     }
 
     private void checkEventInDatabase() {

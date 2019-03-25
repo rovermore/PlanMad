@@ -38,4 +38,26 @@
     <string name="main_notification_channel_name">Primary</string>
     <string name="today_reminder_notification_title">Eventos Hoy</string>
     <string name="today_reminder_notification_body">Un vistazo rápido a los eventos mas interesantes que se celebran hoy en Madrid</string>
+
+    <string name="ciudad21distritos">1ciudad21distritos</string>
+    <string name="ActividadesCalleArteUrbano">ActividadesCalleArteUrbano</string>
+    <string name="Campamentos">Campamentos</string>
+    <string name="CineActividadesAudiovisuales">CineActividadesAudiovisuales</string>
+    <string name="CircoMagia">CircoMagia</string>
+    <string name="ConcursosCertamenes">ConcursosCertamenes</string>
+    <string name="ConferenciasColoquios">ConferenciasColoquios</string>
+    <string name="CuentacuentosTite">CuentacuentosTite</string>
+    <string name="CuentacuentosTiteresMarionetas">CuentacuentosTiteresMarionetas</string>
+    <string name="CursosTalleres">CursosTalleres</string>
+    <string name="DanzaBaile">DanzaBaile</string>
+    <string name="ExcursionesItinerariosVisitas">ExcursionesItinerariosVisitas</string>
+    <string name="Exposiciones">Exposiciones</string>
+    <string name="FiestasNavidadesReyes">FiestasNavidadesReyes</string>
+    <string name="FiestasSemanaSanta">FiestasSemanaSanta</string>
+    <string name="Musica">Musica</string>
+    <string name="nullo">null</string>
+    <string name="ProgramacionDestacadaAgendaCultura">ProgramacionDestacadaAgendaCultura</string>
+    <string name="RecitalesPresentacionesActosLiterarios">RecitalesPresentacionesActosLiterarios</string>
+    <string name="TeatroPerformance">TeatroPerformance</string>
+    <string name="ZMUPI">ZMUPI</string>
 </resources>

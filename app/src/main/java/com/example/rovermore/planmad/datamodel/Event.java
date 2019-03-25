@@ -23,12 +23,13 @@ public class Event implements Parcelable {
     private String eventLocation;
     private double latitude;
     private double longitude;
+    private String eventType;
     private boolean notification;
 
     @Ignore
     public Event(int hash, String title, String description, int price, Date dtstart, Date dtend,
         String recurrenceDays, String recurrenceFrequency, String eventLocation, double latitude, double longitude,
-                 boolean notification){
+                 String eventType, boolean notification){
         this.hash = hash;
         this.title = title;
         this.description = description;
@@ -40,12 +41,13 @@ public class Event implements Parcelable {
         this.eventLocation = eventLocation;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.eventType = eventType;
         this.notification = notification;
     }
 
     public Event(int idDatabase, int hash, String title, String description, int price, Date dtstart, Date dtend,
                  String recurrenceDays, String recurrenceFrequency, String eventLocation, double latitude, double longitude,
-                 boolean notification){
+                 String eventType, boolean notification){
         this.idDatabase = idDatabase;
         this.hash = hash;
         this.title = title;
@@ -58,6 +60,7 @@ public class Event implements Parcelable {
         this.eventLocation = eventLocation;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.eventType = eventType;
         this.notification = notification;
     }
 
@@ -109,6 +112,8 @@ public class Event implements Parcelable {
 
     public boolean getNotification () { return notification; }
 
+    public String getEventType() { return eventType; }
+
     public void setNotification (boolean notification){
         this.notification = notification;
     }
@@ -133,6 +138,7 @@ public class Event implements Parcelable {
         dest.writeString(this.eventLocation);
         dest.writeDouble(this.latitude);
         dest.writeDouble(this.longitude);
+        dest.writeString(this.eventType);
 
     }
 
@@ -151,6 +157,7 @@ public class Event implements Parcelable {
         this.eventLocation = in.readString();
         this.latitude = in.readDouble();
         this.longitude = in.readDouble();
+        this.eventType = in.readString();
     }
 
     public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {

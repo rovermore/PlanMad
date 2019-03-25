@@ -5,6 +5,15 @@
     android:orientation="vertical"
     android:background="@android:color/white">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:text="Hoy en Madrid"
+        android:gravity="center"/>
 
     <!-- ListView to be shown on widget -->
     <ListView

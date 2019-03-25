@@ -19,7 +19,6 @@ import com.example.rovermore.planmad.fragments.FavFragment;
 import com.example.rovermore.planmad.fragments.MainFragment;
 import com.example.rovermore.planmad.fragments.TodayFragment;
 import com.example.rovermore.planmad.network.NetworkUtils;
-import com.example.rovermore.planmad.sync.ReminderUtilities;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -140,8 +139,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         linearLayoutMapView = (View) findViewById(R.id.map_linear_layout);
-
-        ReminderUtilities.scheduleTodayReminder(this);
 
         String notificationFragment = getIntent().getStringExtra("NotificationFragment");
 
@@ -379,17 +376,27 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //saving the lists of each fragment
-        outState.putParcelableArrayList(EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) eventList);
-        outState.putParcelableArrayList(TODAY_EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) todayEventList);
-
-        outState.putParcelable(MAIN_LIST_STATE_KEY, mListState);
-        outState.putParcelable(FAV_LIST_STATE_KEY, mFavListState);
-        outState.putParcelable(TODAY_LIST_STATE_KEY, mTodayListState);
-
-        outState.putParcelable(MAIN_EVENT, mainEvent);
-        outState.putParcelable(FAV_EVENT, favEvent);
-        outState.putParcelable(TODAY_EVENT, todayEvent);
-
-        outState.putInt(FRAGMENT_KEY, currentFragment);
+        switch (currentFragment){
+            case MAIN_FRAGMENT:
+                outState.putParcelableArrayList(EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) eventList);
+                outState.putParcelable(MAIN_LIST_STATE_KEY, mListState);
+                outState.putParcelable(MAIN_EVENT, mainEvent);
+                outState.putInt(FRAGMENT_KEY, currentFragment);
+                break;
+            case FAV_FRAGMENT:
+                outState.putParcelable(FAV_LIST_STATE_KEY, mFavListState);
+                outState.putParcelable(FAV_EVENT, favEvent);
+                outState.putInt(FRAGMENT_KEY, currentFragment);
+                break;
+            case TODAY_FRAGMENT:
+                outState.putParcelableArrayList(TODAY_EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) todayEventList);
+                outState.putParcelable(TODAY_LIST_STATE_KEY, mTodayListState);
+                outState.putParcelable(TODAY_EVENT, todayEvent);
+                outState.putInt(FRAGMENT_KEY, currentFragment);
+                break;
+            case MAP_FRAGMENT:
+                outState.putInt(FRAGMENT_KEY, currentFragment);
+                break;
+        }
     }
 }

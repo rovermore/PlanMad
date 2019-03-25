@@ -83,6 +83,7 @@ public class NetworkUtils {
     public static List<Event> parseJson(String json) throws JSONException {
         List<Event> eventList = new ArrayList<>();
         JSONObject resultJson = null;
+        String eventTypeList = "LIST OF TYPES: ";
         try {
             resultJson = new JSONObject(json);
         } catch (JSONException e) {
@@ -94,6 +95,8 @@ public class NetworkUtils {
             JSONObject jsonEvent = resultArray.getJSONObject(i);
             String stringHash = jsonEvent.optString("id");
             int hash = Integer.parseInt(stringHash);
+            String type = jsonEvent.optString("@type");
+            String eventType = parseEventType(type);
             String title = jsonEvent.optString("title");
             String description = jsonEvent.optString("description");
             int price = jsonEvent.optInt("price");
@@ -118,7 +121,7 @@ public class NetworkUtils {
             }
 
             Event event = new Event(hash, title, description, price, dtstart, dtend,recurrenceDays,
-                    recurrenceFrequency, eventLocation, latitude, longitude, false);
+                    recurrenceFrequency, eventLocation, latitude, longitude, eventType, false);
 
             Log.v(TAG, "title " + title);
             Log.v(TAG, "id " + hash);
@@ -128,11 +131,27 @@ public class NetworkUtils {
             Log.v(TAG, "LONGITUDE " + longitude);
 
             eventList.add(event);
+            eventTypeList = eventTypeList + "/" + eventType;
+            //Log.d(TAG, "FINAL TYPE LIST " + eventTypeList);
         }
 
         sortEventList(eventList);
 
         return eventList;
+    }
+
+    private static String parseEventType (String type){
+        Log.d(TAG, "THE RECEIVED TYPE IS :" + type);
+        if(type==""){
+            return null;
+        }
+        type = type + "/";
+        String[] firstSplit = type.split("actividades/");
+        String firstResult = firstSplit[1];
+        String[] secondSplit = firstResult.split("/");
+        String eventType = secondSplit[0];
+        Log.d(TAG,"the event type is " + eventType);
+        return eventType;
     }
 
     private static void sortEventList(List<Event> eventList) {

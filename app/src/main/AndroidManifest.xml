@@ -40,14 +40,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".sync.TodayReminderFirebaseJobService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
-            </intent-filter>
-        </service>
-
         <receiver android:name=".sync.NotificationReceiver" />
 
         <receiver android:name=".widget.WidgetProvider"

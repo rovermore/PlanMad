@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.rovermore.planmad.R;
@@ -43,8 +44,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
     @Override
     public void onBindViewHolder(@NonNull MyEventViewHolder myEventViewHolder, int i) {
         Event event = eventList.get(i);
-
-
         String textDate = "No date found";
         Date date = event.getDtstart();
         if(date != null) {
@@ -53,7 +52,67 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
         myEventViewHolder.tvDate.setText(textDate);
         myEventViewHolder.tvTitle.setText(event.getTitle());
         myEventViewHolder.tvLocation.setText(event.getEventLocation());
-        myEventViewHolder.tvPrice.setText(String.valueOf(event.getPrice()));
+
+        String eventType = event.getEventType();
+
+        if(eventType != null && eventType.equals("ActividadesCalleArteUrbano")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.arte_urbano);
+        }
+        if(eventType != null && eventType.equals("Campamentos") ) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.campamentos);
+        }
+        if(eventType != null && eventType.equals("CineActividadesAudiovisuales")){
+            myEventViewHolder.imageView.setImageResource(R.drawable.cine);
+        }
+        if (eventType != null && eventType.equals("CircoMagia")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.circo);
+        }
+        if (eventType != null && eventType.equals("ConcursosCertamenes")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.concurso);
+        }
+        if (eventType != null && eventType.equals("ConferenciasColoquios")){
+            myEventViewHolder.imageView.setImageResource(R.drawable.conference);
+        }
+        if (eventType != null && eventType.equals("CuentacuentosTite")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.cuenta_cuentos);
+        }
+        if (eventType != null && eventType.equals("CuentacuentosTiteresMarionetas")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.cuenta_cuentos);
+        }
+        if (eventType != null && eventType.equals("CursosTalleres")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.cursos_talleres);
+        }
+        if (eventType != null && eventType.equals("DanzaBaile")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.danza);
+        }
+        if (eventType != null && eventType.equals("ExcursionesItinerariosVisitas")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.district);
+        }
+        if (eventType != null && eventType.equals("Exposiciones")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.exposiciones);
+        }
+        if (eventType != null && eventType.equals("FiestasNavidadesReyes")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.actos_religiosos);
+        }
+        if (eventType != null && eventType.equals("FiestasSemanaSanta")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.actos_religiosos);
+        }
+        if (eventType != null && eventType.equals("Musica")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.musica);
+        }
+        if (eventType != null && eventType.equals("ProgramacionDestacadaAgendaCultura")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.exposiciones);
+        }
+        if (eventType != null && eventType.equals("RecitalesPresentacionesActosLiterarios")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.teatro);
+        }
+        if (eventType != null && eventType.equals("TeatroPerformance")) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.teatro);
+        }
+        if (eventType == null) {
+            myEventViewHolder.imageView.setImageResource(R.drawable.district);
+        }
+
 
     }
 
@@ -70,15 +129,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
         TextView tvDate;
         TextView tvTitle;
         TextView tvLocation;
-        TextView tvPrice;
+        ImageView imageView;
 
         public MyEventViewHolder(@NonNull View itemView) {
             super(itemView);
-
             tvDate = itemView.findViewById(R.id.tv_main_date);
             tvTitle = itemView.findViewById(R.id.tv_main_title);
             tvLocation = itemView.findViewById(R.id.tv_main_location);
-            tvPrice = itemView.findViewById(R.id.tv_main_price);
+            imageView = itemView.findViewById(R.id.image_view);
 
             itemView.setOnClickListener(this);
         }

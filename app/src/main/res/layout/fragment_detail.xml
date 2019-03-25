@@ -8,27 +8,42 @@
     android:id="@+id/fragment_detail"
     tools:showIn="@layout/activity_detail">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/detail_image_view"
+        android:scaleType="centerCrop"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/scrim_gradient"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@android:color/white">
+            >
+
 
             <TextView
                 android:id="@+id/tv_detail_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:textSize="45dp"
-                android:textStyle="bold" />
+                android:textColor="@android:color/white"
+                android:textSize="45sp"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"/>
+
 
             <TextView
                 android:id="@+id/tv_detail_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:layout_marginTop="28dp"/>
+                android:textColor="@android:color/white"
+                android:layout_marginTop="28dp"
+                android:textSize="22sp"
+                android:layout_marginStart="8dp"/>
 
             <View
                 android:layout_width="match_parent"
@@ -40,38 +55,43 @@
                 android:id="@+id/tv_detail_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:layout_marginTop="28dp"/>
+                android:textColor="@android:color/white"
+                android:layout_marginTop="28dp"
+                android:textSize="22sp"
+                android:layout_marginStart="8dp"/>
 
             <TextView
                 android:id="@+id/tv_detail_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:layout_marginStart="8dp"/>
 
             <TextView
                 android:id="@+id/tv_detail_date_end"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:layout_marginStart="8dp"/>
 
             <TextView
                 android:id="@+id/tv_detail_recurrence_day"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:layout_marginStart="8dp"/>
 
             <TextView
                 android:id="@+id/tv_detail_recurrence_frequency"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:layout_marginStart="8dp"/>
 
-            <TextView
-                android:id="@+id/tv_detail_price"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/black" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -79,7 +99,6 @@
                 android:id="@+id/tv_detail_favoritos"
                 android:background="@drawable/rounded_background"
                 android:text="@string/title_top_fav"
-                android:layout_marginTop="30dp"
                 android:layout_gravity="center"
                 android:textSize="28sp"
                 android:paddingRight="10dp"
