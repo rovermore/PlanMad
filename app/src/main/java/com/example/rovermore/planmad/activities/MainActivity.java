@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
     private boolean isDataPassedFromTodayFragment = false;
     private boolean isSavedState = false;
     private int currentFragment;
-
+    private MainFragment mainFragment;
 
     private DetailFragment detailFragment;
 
@@ -172,7 +173,65 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
     private void setUpHomeFragment() {
         linearLayoutMapView.setVisibility(View.INVISIBLE);
         setTitle(R.string.title_top_home);
-        MainFragment mainFragment = new MainFragment();
+        Fragment fragment =  fragmentManager.findFragmentByTag("MAIN-FRAGMENT");
+        if (fragment!=null){
+            mainFragment = (MainFragment) fragment;
+            Bundle bundle = new Bundle();
+
+            if (findViewById(R.id.two_pane_linear_layout) != null) {
+                bundle.putBoolean(TWO_PANE_KEY, true);
+                if (isDataPassedFromMainFragment || isSavedState) {
+                    bundle.putParcelable(MainFragment.LIST_STATE_KEY, mListState);
+                    //bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) eventList);
+                    bundle.putParcelable(MainFragment.EVENT_KEY_NAME, mainEvent);
+                }
+                mainFragment.setArguments(bundle);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.two_pane_main_layout, mainFragment,"MAIN-FRAGMENT")
+                        .commit();
+            } else {
+                if (isDataPassedFromMainFragment || isSavedState) {
+                    //Bundle bundle = new Bundle();
+                    bundle.putBoolean(TWO_PANE_KEY, false);
+                    bundle.putParcelable(MainFragment.LIST_STATE_KEY, mListState);
+                    //bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) eventList);
+                    mainFragment.setArguments(bundle);
+                }
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main_frame_layout, mainFragment, "MAIN-FRAGMENT")
+                        .commit();
+
+            }
+        } else {
+            mainFragment = new MainFragment();
+            Bundle bundle = new Bundle();
+
+            if (findViewById(R.id.two_pane_linear_layout) != null) {
+                bundle.putBoolean(TWO_PANE_KEY, true);
+                if (isDataPassedFromMainFragment || isSavedState) {
+                    bundle.putParcelable(MainFragment.LIST_STATE_KEY, mListState);
+                    //bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) eventList);
+                    bundle.putParcelable(MainFragment.EVENT_KEY_NAME, mainEvent);
+                }
+                mainFragment.setArguments(bundle);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.two_pane_main_layout, mainFragment,"MAIN-FRAGMENT")
+                        .commit();
+            } else {
+                if (isDataPassedFromMainFragment || isSavedState) {
+                    //Bundle bundle = new Bundle();
+                    bundle.putBoolean(TWO_PANE_KEY, false);
+                    bundle.putParcelable(MainFragment.LIST_STATE_KEY, mListState);
+                    //bundle.putParcelableArrayList(MainFragment.EVENT_LIST_KEY, (ArrayList<? extends Parcelable>) eventList);
+                    mainFragment.setArguments(bundle);
+                }
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main_frame_layout, mainFragment, "MAIN-FRAGMENT")
+                        .commit();
+            }
+        }
+
+        /*MainFragment mainFragment = new MainFragment();
         if (findViewById(R.id.two_pane_linear_layout) != null) {
             Bundle bundle = new Bundle();
             bundle.putBoolean(TWO_PANE_KEY, true);
@@ -197,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
                     .replace(R.id.main_frame_layout, mainFragment)
                     .commit();
 
-        }
+        }*/
     }
 
 
@@ -274,9 +333,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
     }
 
     @Override
-    public void onDataPass(Parcelable mListState, List<Event> eventList, Event event) {
+    public void onDataPass(Parcelable mListState, Event event) {
         this.mListState = mListState;
-        this.eventList = eventList;
+        //this.eventList = eventList;
         if (event != null && findViewById(R.id.two_pane_linear_layout) != null) {
             this.mainEvent = event;
             setUpTwoPaneDetailFragment(mainEvent);
@@ -376,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         }
     }
 
-    @Override
+   /* @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //saving the lists of each fragment
@@ -402,5 +461,5 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
                 outState.putInt(FRAGMENT_KEY, currentFragment);
                 break;
         }
-    }
+    }*/
 }

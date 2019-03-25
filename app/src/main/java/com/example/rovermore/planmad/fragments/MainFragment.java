@@ -58,7 +58,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     public static final String EVENT_LIST_KEY = "data_state";
 
     public interface OnDataPass {
-        void onDataPass(Parcelable mListState, List<Event> eventList, Event event);
+        void onDataPass(Parcelable mListState, Event event);
     }
 
     public MainFragment() {}
@@ -142,7 +142,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     public void onEventClicked(Event event) {
         if(mTwoPane){
             this.clickedEvent = event;
-            onDataPass.onDataPass(mListState, eventList, clickedEvent);
+            onDataPass.onDataPass(mListState, clickedEvent);
         } else {
             Intent intent = new Intent(getActivity(), DetailActivity.class);
             intent.putExtra(EVENT_KEY_NAME, event);
@@ -175,7 +175,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             eventList = events;
             swipeRefreshLayout.setRefreshing(false);
             //if(setFirstEvent) clickedEvent = eventList.get(0);
-            onDataPass.onDataPass(mListState, eventList, clickedEvent);
+            onDataPass.onDataPass(mListState, clickedEvent);
         }
     }
 
@@ -184,7 +184,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         super.onPause();
         // Save list state
         mListState = layoutManager.onSaveInstanceState();
-        onDataPass.onDataPass(mListState, eventList, clickedEvent);
+        onDataPass.onDataPass(mListState, clickedEvent);
 
     }
 }
