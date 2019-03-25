@@ -318,7 +318,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        if (todayEventList!=null) {
+        if (todayEventList == null) {
+            todayEventList = NetworkUtils.getTodayList(eventList);
+        }
+        if (todayEventList != null) {
             for (int i = 0; i < todayEventList.size(); i++) {
                 Event event = todayEventList.get(i);
                 LatLng eventLocation = new LatLng(event.getLatitude(), event.getLongitude());
@@ -335,8 +338,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
             googleMap.setOnInfoWindowClickListener(this);
         }
-
     }
+
+
 
     @Override
     public void onInfoWindowClick(Marker marker) {

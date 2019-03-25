@@ -211,5 +211,12 @@ public class NetworkUtils {
 
         return todayEventList;
     }
+
+    public static String formatTextDate(Date date){
+        String rawStringDate = String.valueOf(date);
+        String[] stringSplit = rawStringDate.split("GMT");
+        String dateString = stringSplit[0];
+        return dateString;
+    }
 }
 

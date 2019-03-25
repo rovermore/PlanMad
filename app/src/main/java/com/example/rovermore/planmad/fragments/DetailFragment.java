@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.database.AppDatabase;
 import com.example.rovermore.planmad.datamodel.Event;
+import com.example.rovermore.planmad.network.NetworkUtils;
 import com.example.rovermore.planmad.sync.ReminderUtilities;
 import com.example.rovermore.planmad.threads.AppExecutors;
 
@@ -83,8 +84,8 @@ public class DetailFragment extends Fragment {
 
         name.setText(event.getTitle());
         location.setText(event.getEventLocation());
-        date.setText(String.valueOf(event.getDtstart()));
-        endDate.setText(String.valueOf(event.getDtend()));
+        date.setText(NetworkUtils.formatTextDate(event.getDtstart()));
+        endDate.setText(NetworkUtils.formatTextDate(event.getDtend()));
         recurrenceDay.setText(event.getRecurrenceDays());
         recurrenceFrequency.setText(event.getRecurrenceFrequency());
         description.setText(event.getDescription());
