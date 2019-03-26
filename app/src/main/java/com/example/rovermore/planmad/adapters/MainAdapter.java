@@ -42,7 +42,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyEventViewHolder myEventViewHolder, int i) {
+    public void onBindViewHolder(@NonNull MyEventViewHolder myEventViewHolder, int i){
         Event event = eventList.get(i);
         String textDate = "No date found";
         Date date = event.getDtstart();
@@ -113,7 +113,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
             myEventViewHolder.imageView.setImageResource(R.drawable.district);
         }
 
-
     }
 
     @Override
@@ -143,6 +142,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyEventViewHol
 
         @Override
         public void onClick(View view) {
+
             int position = getAdapterPosition();
             Event event = eventList.get(position);
             eventClickListener.onEventClicked(event);

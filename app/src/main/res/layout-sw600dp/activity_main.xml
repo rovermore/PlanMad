@@ -23,9 +23,9 @@
             android:layout_weight="1" />
 
         <View
-            android:layout_width="1dp"
+            android:layout_width="8dp"
             android:layout_height="match_parent"
-            android:background="@android:color/darker_gray" />
+            android:background="@color/colorPrimary" />
 
         <ScrollView
             android:layout_width="0dp"

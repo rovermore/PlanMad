@@ -139,6 +139,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
             isSavedState = true;
         }
 
+        getSupportActionBar().setElevation(0);
+
         if(savedInstanceState==null) Toast.makeText(this,"Selecciona un evento de la lista",Toast.LENGTH_LONG).show();
 
         fragmentManager = getSupportFragmentManager();

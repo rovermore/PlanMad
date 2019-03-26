@@ -137,6 +137,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             this.clickedEvent = event;
             onDataPass.onDataPass(mListState, clickedEvent, monthPosition);
         } else {
+
             Intent intent = new Intent(getActivity(), DetailActivity.class);
             intent.putExtra(EVENT_KEY_NAME, event);
             startActivity(intent);

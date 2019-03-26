@@ -12,7 +12,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:elevation="8dp"
+        android:background="@android:color/white">
 
         <Spinner
             android:id="@+id/spinner_month"
@@ -28,8 +30,13 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/filter_prompt"
-            android:background="@color/colorAccent"
-            android:textColor="@android:color/white"/>
+            android:textSize="20dp"
+            android:background="@drawable/rounded_background"
+            android:textColor="@android:color/white"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:stateListAnimator="@anim/button_raise"/>
 
     </LinearLayout>
 

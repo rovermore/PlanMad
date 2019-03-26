@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/detail_image_view"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
 
     <View
         android:layout_width="match_parent"
@@ -48,7 +48,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/colorAccent"
+                android:background="@color/colorPrimary"
                 android:layout_marginTop="28dp"/>
 
             <TextView
@@ -106,6 +106,7 @@
                 android:paddingBottom="3dp"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
+                android:stateListAnimator="@anim/button_raise"
                 />
 
             <View
