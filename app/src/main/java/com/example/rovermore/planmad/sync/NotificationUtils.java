@@ -23,7 +23,7 @@ public class NotificationUtils {
         PendingIntent pendingIntent = eventContentIntent(context, event);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context,EVENT_NOTIFICATION_CHANNEL_ID)
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(event.getTitle())
                 .setContentText(event.getDescription())
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(

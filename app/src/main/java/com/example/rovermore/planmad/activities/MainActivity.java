@@ -140,6 +140,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         }
 
         getSupportActionBar().setElevation(0);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_action_bar);
 
         if(savedInstanceState==null) Toast.makeText(this,"Selecciona un evento de la lista",Toast.LENGTH_LONG).show();
 

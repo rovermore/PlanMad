@@ -8,7 +8,7 @@
     <string name="date_format">"yyyy-MM-dd HH:mm:ss"</string>
 
     <string name="title_top_fav">Favoritos</string>
-    <string name="title_top_home">Eventos recomendados</string>
+    <string name="title_top_home">Eventos</string>
     <string name="title_top_today">Hoy</string>
     <string name="title_top_map">Hoy Mapa</string>
 
