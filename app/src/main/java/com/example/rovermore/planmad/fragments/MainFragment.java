@@ -47,6 +47,8 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     private boolean mTwoPane;
     private boolean setFirstEvent;
     private Context context;
+    private List<Event> monthEventList;
+    private int monthPosition;
 
     private OnDataPass onDataPass;
 
@@ -58,7 +60,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     public static final String EVENT_LIST_KEY = "data_state";
 
     public interface OnDataPass {
-        void onDataPass(Parcelable mListState, Event event);
+        void onDataPass(Parcelable mListState, Event event, int monthPosition);
     }
 
     public MainFragment() {}
@@ -92,20 +94,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<Event> monthEventList = new ArrayList<>();
-                DateFormat df = new SimpleDateFormat("MM");
-                for (int i = 0; i < eventList.size(); i++) {
-                    Event event = eventList.get(i);
-                    Date eventDate = event.getDtstart();
-                    String eventDateText = df.format(eventDate);
-                    int eventDateInt = Integer.parseInt(eventDateText);
-                    if (eventDateInt == monthSpinner.getSelectedItemPosition() + 1) {
-                        monthEventList.add(event);
-                    }
-                }
-                if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
-                eventListAdapter.setEventList(monthEventList);
-
+                setMonthList();
             }
         });
 
@@ -121,9 +110,13 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         if(getArguments()!=null){
             mTwoPane = getArguments().getBoolean(MainActivity.TWO_PANE_KEY);
             mListState = getArguments().getParcelable(LIST_STATE_KEY);
-            eventList = getArguments().getParcelableArrayList(EVENT_LIST_KEY);
+            monthPosition = getArguments().getInt(MainActivity.MONTH_POSITION_KEY,1001);
             if(mListState!=null && eventList!=null) {
-                eventListAdapter.setEventList(eventList);
+                if(monthEventList!=null){
+                    eventListAdapter.setEventList(monthEventList);
+                } else {
+                    eventListAdapter.setEventList(eventList);
+                }
                 layoutManager.onRestoreInstanceState(mListState);
                 setFirstEvent = false;
             } else {
@@ -142,7 +135,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     public void onEventClicked(Event event) {
         if(mTwoPane){
             this.clickedEvent = event;
-            onDataPass.onDataPass(mListState, clickedEvent);
+            onDataPass.onDataPass(mListState, clickedEvent, monthPosition);
         } else {
             Intent intent = new Intent(getActivity(), DetailActivity.class);
             intent.putExtra(EVENT_KEY_NAME, event);
@@ -170,12 +163,16 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         @Override
         protected void onPostExecute(List<Event> events) {
             super.onPostExecute(events);
-            if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
-            eventListAdapter.setEventList(events);
             eventList = events;
+            if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
+            if(monthPosition >= 0 && monthPosition <= 11){
+                setMonthList();
+            } else {
+                eventListAdapter.setEventList(events);
+            }
             swipeRefreshLayout.setRefreshing(false);
-            //if(setFirstEvent) clickedEvent = eventList.get(0);
-            onDataPass.onDataPass(mListState, clickedEvent);
+            if(mListState!=null) layoutManager.onRestoreInstanceState(mListState);
+            onDataPass.onDataPass(mListState, clickedEvent, monthPosition);
         }
     }
 
@@ -184,7 +181,24 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         super.onPause();
         // Save list state
         mListState = layoutManager.onSaveInstanceState();
-        onDataPass.onDataPass(mListState, clickedEvent);
+        onDataPass.onDataPass(mListState, clickedEvent, monthPosition);
 
+    }
+
+    private void setMonthList(){
+        monthEventList = new ArrayList<>();
+        DateFormat df = new SimpleDateFormat("MM");
+        for (int i = 0; i < eventList.size(); i++) {
+            Event event = eventList.get(i);
+            Date eventDate = event.getDtstart();
+            String eventDateText = df.format(eventDate);
+            int eventDateInt = Integer.parseInt(eventDateText);
+            monthPosition = monthSpinner.getSelectedItemPosition();
+            if (eventDateInt == monthPosition + 1) {
+                monthEventList.add(event);
+            }
+        }
+        if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
+        eventListAdapter.setEventList(monthEventList);
     }
 }

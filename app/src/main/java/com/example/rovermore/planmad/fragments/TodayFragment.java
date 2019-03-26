@@ -45,7 +45,7 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
     private final static int ASYNC_TASK_INT = 102;
 
     public interface OnDataPassFromTodayFragment {
-        void onDataPassFromTodayFragment(Parcelable mListState, List<Event> eventList, Event event);
+        void onDataPassFromTodayFragment(Parcelable mListState, Event event);
     }
 
     public TodayFragment() {}
@@ -77,7 +77,6 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
         if(getArguments()!=null){
             mTwoPane = getArguments().getBoolean(MainActivity.TWO_PANE_KEY);
             mListState = getArguments().getParcelable(MainFragment.LIST_STATE_KEY);
-            eventList = getArguments().getParcelableArrayList(MainFragment.EVENT_LIST_KEY);
             if(mListState!=null && eventList!=null) {
                 eventListAdapter.setEventList(eventList);
                 layoutManager.onRestoreInstanceState(mListState);
@@ -97,7 +96,7 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
     public void onEventClicked(Event event) {
         if(mTwoPane) {
             this.clickedEvent = event;
-            onDataPassFromTodayFragment.onDataPassFromTodayFragment(mListState, eventList, clickedEvent);
+            onDataPassFromTodayFragment.onDataPassFromTodayFragment(mListState, clickedEvent);
         } else {
             Intent intent = new Intent(getActivity(), DetailActivity.class);
             intent.putExtra(MainFragment.EVENT_KEY_NAME, event);
@@ -127,11 +126,12 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
         @Override
         protected void onPostExecute(List<Event> events) {
             super.onPostExecute(events);
+            eventList = events;
             if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
             eventListAdapter.setEventList(events);
-            eventList = events;
             swipeRefreshLayout.setRefreshing(false);
-            onDataPassFromTodayFragment.onDataPassFromTodayFragment(mListState, eventList, clickedEvent);
+            if(mListState!=null) layoutManager.onRestoreInstanceState(mListState);
+            onDataPassFromTodayFragment.onDataPassFromTodayFragment(mListState, clickedEvent);
         }
     }
 
@@ -139,6 +139,6 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
     public void onPause() {
         super.onPause();
         mListState = layoutManager.onSaveInstanceState();
-        onDataPassFromTodayFragment.onDataPassFromTodayFragment(mListState, eventList, clickedEvent);
+        onDataPassFromTodayFragment.onDataPassFromTodayFragment(mListState, clickedEvent);
     }
 }
