@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.datamodel.Event;
@@ -80,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
     private boolean isSavedState = false;
     private int currentFragment;
     private int monthPosition;
+    private View placeHolderImage;
 
     private MainFragment mainFragment;
     private TodayFragment todayFragment;
@@ -143,12 +143,13 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_action_bar);
 
-        if(savedInstanceState==null) Toast.makeText(this,"Selecciona un evento de la lista",Toast.LENGTH_LONG).show();
-
         fragmentManager = getSupportFragmentManager();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         linearLayoutMapView = (View) findViewById(R.id.map_linear_layout);
+
+        placeHolderImage = (View) findViewById(R.id.place_holder_image);
+        placeHolderImage.setVisibility(View.VISIBLE);
 
         String notificationFragment = getIntent().getStringExtra("NotificationFragment");
 
@@ -347,6 +348,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
     public void onDataPass(Parcelable mListState, Event event, int monthPosition) {
         this.mListState = mListState;
         this.monthPosition = monthPosition;
+        placeHolderImage.setVisibility(View.GONE);
         if (event != null && findViewById(R.id.two_pane_linear_layout) != null) {
             this.mainEvent = event;
             setUpTwoPaneDetailFragment(mainEvent);

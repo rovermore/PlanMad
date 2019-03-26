@@ -173,6 +173,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             }
             swipeRefreshLayout.setRefreshing(false);
             if(mListState!=null) layoutManager.onRestoreInstanceState(mListState);
+            if(mListState==null) clickedEvent = eventList.get(0);
             onDataPass.onDataPass(mListState, clickedEvent, monthPosition);
         }
     }

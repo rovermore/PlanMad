@@ -4,7 +4,7 @@
     android:initialLayout="@layout/event_widget_provider"
     android:minHeight="40dp"
     android:minWidth="40dp"
-    android:previewImage="@drawable/ic_event_note_black_24dp"
+    android:previewImage="@drawable/ic_action_bar"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="3600000"
     android:widgetCategory="home_screen">

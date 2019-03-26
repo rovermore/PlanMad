@@ -7,17 +7,33 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
+    <RelativeLayout
+        android:id="@+id/place_holder_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/sun" />
+
+    </RelativeLayout>
+
+
     <FrameLayout
         android:id="@+id/main_frame_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:layout_marginBottom="56dp"/>
 
     <LinearLayout
         android:id="@+id/map_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible">
+        android:visibility="invisible"
+        android:layout_marginBottom="56dp">
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -28,6 +44,7 @@
             tools:context=".activities.MainActivity" />
 
     </LinearLayout>
+
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"

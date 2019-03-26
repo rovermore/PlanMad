@@ -10,13 +10,18 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
-        resValue 'string', "gooogle_api_key", "\" GoogleApiKey\""
+
 
     }
     buildTypes {
+
+        debug{
+            resValue 'string', "api_key", GoogleApiKey
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue 'string', "api_key", GoogleApiKey
         }
     }
 }
@@ -42,5 +47,4 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
 
-    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
 }
