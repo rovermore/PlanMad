@@ -12,13 +12,13 @@ import com.example.rovermore.planmad.R;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
-    public static String NOTIFICATION_ID = "notification-id";
+    public static String NOTIFICATION_HASH_KEY = "notification-hash";
     public static String EVENT_NOTIFICATION = "event-notification";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Notification eventNotification = intent.getParcelableExtra(EVENT_NOTIFICATION);
-        int notificationId = intent.getIntExtra(NOTIFICATION_ID, 1);
+        int notificationId = intent.getIntExtra(NOTIFICATION_HASH_KEY, 1);
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -30,5 +30,6 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
 
         notificationManager.notify(notificationId,eventNotification);
+
     }
 }

@@ -58,7 +58,8 @@
                 android:textColor="@android:color/white"
                 android:layout_marginTop="28dp"
                 android:textSize="22sp"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="8dp"
+                android:drawableStart="@drawable/ic_place_black_24dp"/>
 
             <TextView
                 android:id="@+id/tv_detail_date"
@@ -66,7 +67,8 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
                 android:textSize="22sp"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="8dp"
+                android:drawableStart="@drawable/ic_alarm_black_24dp"/>
 
             <TextView
                 android:id="@+id/tv_detail_date_end"
@@ -74,7 +76,8 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
                 android:textSize="22sp"
-                android:layout_marginStart="8dp"/>
+                android:layout_marginStart="8dp"
+                android:drawableStart="@drawable/ic_alarm_black_24dp"/>
 
             <TextView
                 android:id="@+id/tv_detail_recurrence_day"
@@ -92,7 +95,6 @@
                 android:textSize="22sp"
                 android:layout_marginStart="8dp"/>
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -108,6 +110,8 @@
                 android:textStyle="bold"
                 android:stateListAnimator="@anim/button_raise"
                 />
+
+
 
             <View
                 android:layout_width="match_parent"

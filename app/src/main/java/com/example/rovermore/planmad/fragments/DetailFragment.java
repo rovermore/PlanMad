@@ -1,6 +1,7 @@
 package com.example.rovermore.planmad.fragments;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
@@ -110,6 +111,15 @@ public class DetailFragment extends Fragment {
                 } else {
                     Toast.makeText(getContext(), "El evento ya está guardado en favoritos", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(event.getLink()));
+                startActivity(intent);
+                Log.d(TAG,"THE EVENT URL IS: " + event.getLink());
             }
         });
 
@@ -235,7 +245,8 @@ public class DetailFragment extends Fragment {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT,
-                        event.getTitle() +
+                        event.getLink() +
+                                " - " +event.getTitle() +
                                 " - " + event.getDescription() +
                                 " - " + event.getDtstart());
                 sendIntent.setType("text/plain");

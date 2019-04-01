@@ -104,6 +104,7 @@ public class NetworkUtils {
             Date dtstart = fromStringToDate(stringDtStart);
             String stringDtEnd = jsonEvent.optString("dtend");
             Date dtend = fromStringToDate(stringDtEnd);
+            String link = jsonEvent.optString("link");
             JSONObject jsonRecurrence = jsonEvent.optJSONObject("recurrence");
             String recurrenceDays = null;
             String recurrenceFrequency = null;
@@ -121,7 +122,7 @@ public class NetworkUtils {
             }
 
             Event event = new Event(hash, title, description, price, dtstart, dtend,recurrenceDays,
-                    recurrenceFrequency, eventLocation, latitude, longitude, eventType, false);
+                    recurrenceFrequency, eventLocation, latitude, longitude, eventType, false, link);
 
             Log.v(TAG, "title " + title);
             Log.v(TAG, "id " + hash);
