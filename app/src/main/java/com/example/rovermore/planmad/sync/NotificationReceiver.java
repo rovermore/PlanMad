@@ -23,9 +23,9 @@ public class NotificationReceiver extends BroadcastReceiver {
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel mChannel = new NotificationChannel(
-                    "uno",
+                    NotificationUtils.EVENT_NOTIFICATION_CHANNEL_ID,
                     context.getString(R.string.main_notification_channel_name),
-                    NotificationManager.IMPORTANCE_HIGH);
+                    NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(mChannel);
         }
 

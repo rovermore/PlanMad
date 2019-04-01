@@ -4,7 +4,13 @@
 
     <item>
         <shape>
-            <solid android:color="@android:color/white" />
+            <!--<solid android:color="@android:color/white" />-->
+            <gradient
+                android:angle="-90"
+                android:startColor="#f5f5f5"
+                android:centerColor="#fafafa"
+                android:endColor="#FFFFFF"
+                android:type="linear"/>
 
         </shape>
     </item>

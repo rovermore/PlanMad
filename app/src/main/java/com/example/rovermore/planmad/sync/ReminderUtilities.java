@@ -19,7 +19,7 @@ public class ReminderUtilities {
      * than writing out a bunch of multiplication ourselves and risk making a silly mistake.
      */
     private static final int HOUR_BEFORE_EVENT = 1;
-    private static final int ONE_HOUR_IN_MILISECONDS_BEFORE_EVENT = (int) (TimeUnit.HOURS.toMillis(HOUR_BEFORE_EVENT));
+    private static final int ONE_HOUR_IN_MILLISECONDS_BEFORE_EVENT = (int) (TimeUnit.HOURS.toMillis(HOUR_BEFORE_EVENT));
 
     public static void scheduleEventNotification (Context context, Event event){
         if(event!=null) {
@@ -32,12 +32,11 @@ public class ReminderUtilities {
                     notificationIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
-            //long futureInMillis = event.getDtstart().getTime() - ONE_HOUR_IN_MILISECONDS_BEFORE_EVENT;
-            long futureInMillis = System.currentTimeMillis() + 10000;
+            long futureInMillis = event.getDtstart().getTime() - ONE_HOUR_IN_MILLISECONDS_BEFORE_EVENT;
+            //long futureInMillis = System.currentTimeMillis() + 10000;
             Log.d(TAG, "The event date is: " + futureInMillis);
 
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            //alarmManager.set(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
@@ -45,7 +44,6 @@ public class ReminderUtilities {
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    //alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
                 }
             }

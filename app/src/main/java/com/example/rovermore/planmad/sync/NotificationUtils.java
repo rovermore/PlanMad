@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
@@ -15,7 +14,7 @@ import com.example.rovermore.planmad.fragments.MainFragment;
 
 public class NotificationUtils {
 
-    private static final String EVENT_NOTIFICATION_CHANNEL_ID = "event-notification-channel";
+    public static final String EVENT_NOTIFICATION_CHANNEL_ID = "event-notification-channel";
     private static final int EVENT_NOTIFICATION_PENDING_INTENT_ID = 3003;
 
     public static Notification eventNotification (Context context, Event event){
@@ -31,10 +30,10 @@ public class NotificationUtils {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
                 && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             notificationBuilder.setPriority(NotificationCompat.PRIORITY_HIGH);
-        }
+        }*/
         return notificationBuilder.build();
     }
 
