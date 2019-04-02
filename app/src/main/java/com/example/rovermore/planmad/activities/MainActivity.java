@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
     private final int MAP_FRAGMENT = 4;
 
     private View linearLayoutMapView;
+    private View placeHolderImage;
+
     private FragmentManager fragmentManager;
     private Parcelable mListState, mFavListState, mTodayListState;
     //lists for fetching in map fragment
@@ -79,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
     private boolean isSavedState = false;
     private int currentFragment;
     private int monthPosition;
-    private View placeHolderImage;
 
     private MainFragment mainFragment;
     private TodayFragment todayFragment;

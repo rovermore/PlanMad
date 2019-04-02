@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -121,11 +122,13 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
                 setFirstEvent = false;
             } else {
                 new FetchEvents().execute(ASYNC_TASK_INT);
+
             }
 
         } else {
 
             new FetchEvents().execute(ASYNC_TASK_INT);
+
         }
 
         return rootView;
@@ -166,10 +169,10 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             super.onPostExecute(events);
             eventList = events;
             if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
-            if(monthPosition >= 0 && monthPosition <= 11){
+            if(mListState!=null && monthPosition >= 0 && monthPosition <= 11){
                 setMonthList();
             } else {
-                eventListAdapter.setEventList(events);
+                setCurrentMonth();
             }
             swipeRefreshLayout.setRefreshing(false);
             if(mListState!=null) layoutManager.onRestoreInstanceState(mListState);
@@ -202,5 +205,26 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         }
         if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
         eventListAdapter.setEventList(monthEventList);
+    }
+
+    private void setCurrentMonth(){
+        List<Event> currentMonthEventList = new ArrayList<>();
+        DateFormat df = new SimpleDateFormat("MM");
+        Date currentDate = Calendar.getInstance().getTime();
+        String currentDateText = df.format(currentDate);
+        int currentDateInt = Integer.parseInt(currentDateText);
+        for (int i = 0; i < eventList.size(); i++) {
+            Event event = eventList.get(i);
+            Date eventDate = event.getDtstart();
+            String eventDateText = df.format(eventDate);
+            int eventDateInt = Integer.parseInt(eventDateText);
+            //monthPosition = monthSpinner.getSelectedItemPosition();
+            if (eventDateInt == currentDateInt) {
+                currentMonthEventList.add(event);
+            }
+        }
+        if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
+        eventListAdapter.setEventList(currentMonthEventList);
+        monthSpinner.setSelection(currentDateInt - 1);
     }
 }
