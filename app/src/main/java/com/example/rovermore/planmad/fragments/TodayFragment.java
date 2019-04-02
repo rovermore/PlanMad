@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.activities.DetailActivity;
@@ -39,7 +40,7 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
     private boolean mTwoPane;
     private SwipeRefreshLayout swipeRefreshLayout;
     private OnDataPassFromTodayFragment onDataPassFromTodayFragment;
-
+    private ProgressBar progressBar;
     private AppDatabase mDb;
 
     private final static int ASYNC_TASK_INT = 102;
@@ -71,13 +72,15 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(eventListAdapter);
-
+        progressBar = (ProgressBar) rootView.findViewById(R.id.today_progress_loader);
+        progressBar.setVisibility(View.VISIBLE);
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
 
         if(getArguments()!=null){
             mTwoPane = getArguments().getBoolean(MainActivity.TWO_PANE_KEY);
             mListState = getArguments().getParcelable(MainFragment.LIST_STATE_KEY);
             if(mListState!=null && eventList!=null) {
+                progressBar.setVisibility(View.GONE);
                 eventListAdapter.setEventList(eventList);
                 layoutManager.onRestoreInstanceState(mListState);
             } else {
@@ -128,6 +131,7 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
             super.onPostExecute(events);
             eventList = events;
             if(eventListAdapter!=null)eventListAdapter.clearEventListAdapter();
+            progressBar.setVisibility(View.GONE);
             eventListAdapter.setEventList(events);
             swipeRefreshLayout.setRefreshing(false);
             if(mListState!=null) layoutManager.onRestoreInstanceState(mListState);

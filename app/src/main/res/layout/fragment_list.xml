@@ -43,6 +43,13 @@
 
     </LinearLayout>
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/main_progress_loader"
+        android:layout_gravity="center_horizontal|center_vertical"
+        style="@style/Widget.AppCompat.ProgressBar"/>
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"

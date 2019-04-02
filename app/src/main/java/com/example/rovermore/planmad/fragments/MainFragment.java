@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.example.rovermore.planmad.R;
@@ -50,6 +51,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     private Context context;
     private List<Event> monthEventList;
     private int monthPosition;
+    private ProgressBar progressBar;
 
     private OnDataPass onDataPass;
 
@@ -90,6 +92,9 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
 
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
 
+        progressBar = (ProgressBar) rootView.findViewById(R.id.main_progress_loader);
+        progressBar.setVisibility(View.VISIBLE);
+
         monthSpinner = rootView.findViewById(R.id.spinner_month);
         filterButton = rootView.findViewById(R.id.button_filter_month);
         filterButton.setOnClickListener(new View.OnClickListener() {
@@ -114,21 +119,20 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             monthPosition = getArguments().getInt(MainActivity.MONTH_POSITION_KEY,1001);
             if(mListState!=null && eventList!=null) {
                 if(monthEventList!=null){
+                    progressBar.setVisibility(View.GONE);
                     eventListAdapter.setEventList(monthEventList);
                 } else {
+                    progressBar.setVisibility(View.GONE);
                     eventListAdapter.setEventList(eventList);
                 }
                 layoutManager.onRestoreInstanceState(mListState);
                 setFirstEvent = false;
             } else {
                 new FetchEvents().execute(ASYNC_TASK_INT);
-
             }
 
         } else {
-
             new FetchEvents().execute(ASYNC_TASK_INT);
-
         }
 
         return rootView;
@@ -168,6 +172,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         protected void onPostExecute(List<Event> events) {
             super.onPostExecute(events);
             eventList = events;
+            progressBar.setVisibility(View.GONE);
             if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
             if(mListState!=null && monthPosition >= 0 && monthPosition <= 11){
                 setMonthList();

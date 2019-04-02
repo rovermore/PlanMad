@@ -14,10 +14,23 @@
         android:background="@color/colorPrimary">
 
         <ImageView
+            android:id="@+id/iv_sun"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:layout_marginBottom="16dp"
             android:src="@drawable/sun" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/iv_sun"
+            android:text="@string/claim"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
                     return true;
                 case R.id.navigation_map:
                     if (eventList == null) {
+                        placeHolderImage.setVisibility(View.VISIBLE);
                         new FetchEvents().execute(ASYNC_TASK_INT);
                     } else {
                         setUpMapFragment();
@@ -333,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
     private void setUpMapFragment() {
         linearLayoutMapView.setVisibility(View.VISIBLE);
+
         setTitle(R.string.title_top_map);
         if (findViewById(R.id.two_pane_linear_layout) != null){
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -410,6 +412,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
             googleMap.setOnInfoWindowClickListener(this);
         }
+        placeHolderImage.setVisibility(View.GONE);
+        linearLayoutMapView.setVisibility(View.VISIBLE);
     }
 
 
