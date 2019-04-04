@@ -189,7 +189,8 @@ public class NetworkUtils {
 
     public static String fromDateToString(Date date){
 
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         String textDate = df.format(date);
 
         return textDate;
@@ -209,15 +210,7 @@ public class NetworkUtils {
             }
 
         }
-
         return todayEventList;
-    }
-
-    public static String formatTextDate(Date date){
-        String rawStringDate = String.valueOf(date);
-        String[] stringSplit = rawStringDate.split("GMT");
-        String dateString = stringSplit[0];
-        return dateString;
     }
 }
 

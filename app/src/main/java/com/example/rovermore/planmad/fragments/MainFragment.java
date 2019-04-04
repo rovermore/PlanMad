@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.activities.DetailActivity;
@@ -111,7 +112,11 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new FetchEvents().execute(ASYNC_TASK_INT);
+                if(NetworkUtils.isInternetAvailable(getContext())){
+                    new FetchEvents().execute(ASYNC_TASK_INT);
+                } else {
+                    Toast.makeText(getContext(),R.string.network_error,Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -134,11 +139,19 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
                 layoutManager.onRestoreInstanceState(mListState);
                 setFirstEvent = false;
             } else {
-                new FetchEvents().execute(ASYNC_TASK_INT);
+                if(NetworkUtils.isInternetAvailable(getContext())){
+                    new FetchEvents().execute(ASYNC_TASK_INT);
+                } else {
+                    Toast.makeText(getContext(),R.string.network_error,Toast.LENGTH_SHORT).show();
+                }
             }
 
         } else {
-            new FetchEvents().execute(ASYNC_TASK_INT);
+            if(NetworkUtils.isInternetAvailable(getContext())){
+                new FetchEvents().execute(ASYNC_TASK_INT);
+            } else {
+                Toast.makeText(getContext(),R.string.network_error,Toast.LENGTH_SHORT).show();
+            }
         }
 
         return rootView;

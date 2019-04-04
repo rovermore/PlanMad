@@ -85,8 +85,8 @@ public class DetailFragment extends Fragment {
 
         name.setText(event.getTitle());
         location.setText(event.getEventLocation());
-        date.setText(NetworkUtils.formatTextDate(event.getDtstart()));
-        endDate.setText(NetworkUtils.formatTextDate(event.getDtend()));
+        date.setText(NetworkUtils.fromDateToString(event.getDtstart()));
+        endDate.setText(NetworkUtils.fromDateToString(event.getDtend()));
         recurrenceDay.setText(event.getRecurrenceDays());
         recurrenceFrequency.setText(event.getRecurrenceFrequency());
         description.setText(event.getDescription());

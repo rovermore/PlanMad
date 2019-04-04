@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.activities.DetailActivity;
@@ -84,12 +85,19 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
                 eventListAdapter.setEventList(eventList);
                 layoutManager.onRestoreInstanceState(mListState);
             } else {
-                new FetchEvents().execute(ASYNC_TASK_INT);
+                if(NetworkUtils.isInternetAvailable(getContext())){
+                    new FetchEvents().execute(ASYNC_TASK_INT);
+                } else {
+                    Toast.makeText(getContext(),R.string.network_error,Toast.LENGTH_SHORT).show();
+                }
             }
 
         } else {
-
-            new FetchEvents().execute(ASYNC_TASK_INT);
+            if(NetworkUtils.isInternetAvailable(getContext())){
+                new FetchEvents().execute(ASYNC_TASK_INT);
+            } else {
+                Toast.makeText(getContext(),R.string.network_error,Toast.LENGTH_SHORT).show();
+            }
         }
 
         return rootView;

@@ -11,6 +11,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.rovermore.planmad.R;
 import com.example.rovermore.planmad.datamodel.Event;
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
     private View linearLayoutMapView;
     private View placeHolderImage;
+    private TextView welcomeTextView;
 
     private FragmentManager fragmentManager;
     private Parcelable mListState, mFavListState, mTodayListState;
@@ -107,8 +110,13 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
                     return true;
                 case R.id.navigation_map:
                     if (eventList == null) {
+                        if(NetworkUtils.isInternetAvailable(getApplicationContext())){
                         placeHolderImage.setVisibility(View.VISIBLE);
                         new FetchEvents().execute(ASYNC_TASK_INT);
+                        } else {
+                            Toast.makeText(getApplicationContext(),R.string.network_error,Toast.LENGTH_SHORT).show();
+                        }
+
                     } else {
                         setUpMapFragment();
                         currentFragment = MAP_FRAGMENT;
@@ -155,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
         String notificationFragment = getIntent().getStringExtra("NotificationFragment");
 
-        //Checks if activity is started by a notification
+        //Checks if activity is started by a widget notification
         //and sets the corresponding fragment
         if (notificationFragment != null) {
             if (notificationFragment.equals("todayNotificationFragment")) {
@@ -177,8 +185,13 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
                     break;
             }
         } else {
-            setUpHomeFragment();
-            currentFragment = MAIN_FRAGMENT;
+            if(NetworkUtils.isInternetAvailable(getApplicationContext())){
+                setUpHomeFragment();
+                currentFragment = MAIN_FRAGMENT;
+            } else {
+                welcomeTextView = (TextView) findViewById(R.id.tv_welcome_message);
+                welcomeTextView.setText(R.string.network_error);
+            }
         }
     }
 
@@ -333,8 +346,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
     }
 
     private void setUpMapFragment() {
-        linearLayoutMapView.setVisibility(View.VISIBLE);
-
+        //linearLayoutMapView.setVisibility(View.VISIBLE);
+        placeHolderImage.setVisibility(View.VISIBLE);
         setTitle(R.string.title_top_map);
         if (findViewById(R.id.two_pane_linear_layout) != null){
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
