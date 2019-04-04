@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
@@ -46,6 +47,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     private SwipeRefreshLayout swipeRefreshLayout;
     private Spinner monthSpinner;
     private Button filterButton;
+    private LinearLayout linearLayout;
     private boolean mTwoPane;
     private boolean setFirstEvent;
     private Context context;
@@ -95,6 +97,8 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         progressBar = (ProgressBar) rootView.findViewById(R.id.main_progress_loader);
         progressBar.setVisibility(View.VISIBLE);
 
+        linearLayout = (LinearLayout) rootView.findViewById(R.id.view_spinner_button);
+        linearLayout.setVisibility(View.GONE);
         monthSpinner = rootView.findViewById(R.id.spinner_month);
         filterButton = rootView.findViewById(R.id.button_filter_month);
         filterButton.setOnClickListener(new View.OnClickListener() {
@@ -173,6 +177,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             super.onPostExecute(events);
             eventList = events;
             progressBar.setVisibility(View.GONE);
+            linearLayout.setVisibility(View.VISIBLE);
             if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
             if(mListState!=null && monthPosition >= 0 && monthPosition <= 11){
                 setMonthList();
