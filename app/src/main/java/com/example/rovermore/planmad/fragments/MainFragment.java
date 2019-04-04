@@ -124,9 +124,11 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             if(mListState!=null && eventList!=null) {
                 if(monthEventList!=null){
                     progressBar.setVisibility(View.GONE);
+                    linearLayout.setVisibility(View.VISIBLE);
                     eventListAdapter.setEventList(monthEventList);
                 } else {
                     progressBar.setVisibility(View.GONE);
+                    linearLayout.setVisibility(View.VISIBLE);
                     eventListAdapter.setEventList(eventList);
                 }
                 layoutManager.onRestoreInstanceState(mListState);
