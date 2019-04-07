@@ -28,7 +28,7 @@ public class ReminderUtilities {
             notificationIntent.putExtra(NotificationReceiver.EVENT_NOTIFICATION, NotificationUtils.eventNotification(context,event));
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     context,
-                    0,
+                    event.getHash(),
                     notificationIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 

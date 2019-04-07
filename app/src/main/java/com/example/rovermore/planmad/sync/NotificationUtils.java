@@ -42,7 +42,7 @@ public class NotificationUtils {
         startActivityIntent.putExtra(MainFragment.EVENT_KEY_NAME,event);
         return PendingIntent.getActivity(
                 context,
-                EVENT_NOTIFICATION_PENDING_INTENT_ID,
+                event.getHash(),
                 startActivityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
