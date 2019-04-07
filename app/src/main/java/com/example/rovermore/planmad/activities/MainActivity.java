@@ -54,8 +54,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
     private final String FAV_LIST_STATE_KEY = "fav-list-state";
     private final String TODAY_LIST_STATE_KEY = "today-list-state";
 
-    private final String MAIN_FRAGMENT_TAG = "MAIN-FRAGMENT";
-    private final String TODAY_EVENT_FRAGMENT_TAG = "TODAY-FRAGMENT";
+    public static final String MAIN_FRAGMENT_TAG = "MAIN-FRAGMENT";
+    public static final String TODAY_EVENT_FRAGMENT_TAG = "TODAY-FRAGMENT";
 
     private final String MAIN_EVENT = "main-event";
     private final String FAV_EVENT = "fav-event";
