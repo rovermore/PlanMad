@@ -267,15 +267,10 @@ public class DetailFragment extends Fragment {
 
             case R.id.notification_event:
                 //Modify event in ddbb to set value true or false
-                if(event.getNotification()){
-                    event.setNotification(false);
-                    Toast.makeText(getContext(),"Notificaciones desactivadas para el evento",Toast.LENGTH_SHORT).show();
-                    //TODO: cancel notifications
-                } else {
                     event.setNotification(true);
                     ReminderUtilities.scheduleEventNotification(getContext(), event);
                     Toast.makeText(getContext(),"Notificaciones activadas para el evento",Toast.LENGTH_SHORT).show();
-                }
+
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
