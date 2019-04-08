@@ -212,5 +212,24 @@ public class NetworkUtils {
         }
         return todayEventList;
     }
+
+    public static String translateDaysOfTheweek (String string){
+        StringBuilder daysInSpanish = new StringBuilder();
+        String[] daysOfTheWeekEnglish = string.split(",");
+        Log.d(TAG,"The days of the week on the array strin are: " + daysOfTheWeekEnglish);
+        for(int i = 0; i<daysOfTheWeekEnglish.length;i++){
+            String currentDay = daysOfTheWeekEnglish[i];
+            if(i>0 && i<daysOfTheWeekEnglish.length) daysInSpanish.append(", ");
+            if(currentDay.contentEquals("MO")) daysInSpanish.append("L");
+            if(currentDay.contentEquals("TU")) daysInSpanish.append("M");
+            if(currentDay.contentEquals("WE")) daysInSpanish.append("X");
+            if(currentDay.contentEquals("TH")) daysInSpanish.append("J");
+            if(currentDay.contentEquals("FR")) daysInSpanish.append("V");
+            if(currentDay.contentEquals("SA")) daysInSpanish.append("S");
+            if(currentDay.contentEquals("SU")) daysInSpanish.append("D");
+        }
+        String finalString = daysInSpanish.toString();
+        return finalString;
+    }
 }
 

@@ -9,6 +9,8 @@
 
     <string name="network_error">No se pudo conectar a internet</string>
 
+    <string name="semanal">SEMANAL</string>
+
     <string name="title_top_fav">Favoritos</string>
     <string name="title_top_home">Eventos</string>
     <string name="title_top_today">Hoy</string>

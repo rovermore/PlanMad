@@ -87,8 +87,17 @@ public class DetailFragment extends Fragment {
         location.setText(event.getEventLocation());
         date.setText(NetworkUtils.fromDateToString(event.getDtstart()));
         endDate.setText(NetworkUtils.fromDateToString(event.getDtend()));
-        recurrenceDay.setText(event.getRecurrenceDays());
-        recurrenceFrequency.setText(event.getRecurrenceFrequency());
+        if(event.getRecurrenceDays()==null){
+            recurrenceDay.setVisibility(View.INVISIBLE);
+        } else {
+            String recurrenceDaysSpanish = NetworkUtils.translateDaysOfTheweek(event.getRecurrenceDays());
+            recurrenceDay.setText(recurrenceDaysSpanish);
+        }
+        if(event.getRecurrenceFrequency()==null){
+            recurrenceFrequency.setVisibility(View.INVISIBLE);
+        } else {
+            recurrenceFrequency.setText(R.string.semanal);
+        }
         description.setText(event.getDescription());
 
         setImageView();
