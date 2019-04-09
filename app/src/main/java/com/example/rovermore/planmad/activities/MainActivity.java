@@ -167,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         //and sets the corresponding fragment
         if (notificationFragment != null) {
             if (notificationFragment.equals("todayNotificationFragment")) {
+                navigation.setSelectedItemId(R.id.navigation_today);
                 setUpTodayFragment();
             }
         } else if (isSavedState) {
