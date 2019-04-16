@@ -66,4 +66,9 @@ dependencies {
     //dependency for google maps API
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
 
+    //Retrofit dependencies
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
 }
