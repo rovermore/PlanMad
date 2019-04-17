@@ -9,6 +9,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -29,11 +30,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONException;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnDataPass,
         FavFragment.OnDataPassFromFavFragment,
@@ -444,18 +447,28 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
 
         @Override
         protected List<Event> doInBackground(Integer... integers) {
-            List<Event> eventList = new ArrayList<>();
-            List<Event> todayEventList = new ArrayList<>();
-            try {
-                String jsonResponse = NetworkUtils.getResponseFromHttpUrl();
-                eventList = NetworkUtils.parseJson(jsonResponse);
-                todayEventList = NetworkUtils.getTodayList(eventList);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return todayEventList;
+            final List<Event>[] eventList = new List[];
+            final List<Event>[] todayEventList = new List[];
+            /*String jsonResponse = NetworkUtils.getResponseFromHttpUrl();
+            eventList = NetworkUtils.parseJson(jsonResponse);
+            todayEventList = NetworkUtils.getTodayList(eventList);*/
+            Retrofit retrofit = NetworkUtils.connectWithRetrofit();
+            NetworkUtils.ApiService apiService = retrofit.create(NetworkUtils.ApiService.class);
+            apiService.getEvents().enqueue(new Callback<List<Event>>() {
+                @Override
+                public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+                    int statusCode = response.code();
+                    eventList[0] = response.body();
+                    todayEventList[0] = NetworkUtils.getTodayList(eventList[0]);
+
+                }
+
+                @Override
+                public void onFailure(Call<List<Event>> call, Throwable t) {
+                    Log.d(TAG,"ERROR when retreiving and parsing apis service");
+                }
+            });
+            return todayEventList[0];
         }
 
         @Override

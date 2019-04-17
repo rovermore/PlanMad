@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 
 public class MainFragment extends Fragment implements MainAdapter.onEventClickListener {
 
@@ -59,6 +65,8 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     private OnDataPass onDataPass;
 
     private AppDatabase mDb;
+
+    private final String TAG = MainFragment.class.getName();
 
     private final static int ASYNC_TASK_INT = 101;
     public final static String EVENT_KEY_NAME = "event_name";
@@ -175,16 +183,28 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
 
         @Override
         protected List<Event> doInBackground(Integer... integers) {
-            List<Event> eventList = new ArrayList<>();
-            try {
-                String jsonResponse = NetworkUtils.getResponseFromHttpUrl();
-                eventList = NetworkUtils.parseJson(jsonResponse);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return eventList;
+            //List<Event> eventList = new ArrayList<>();
+
+                final List<Event>[] eventList = new List[];
+            /*String jsonResponse = NetworkUtils.getResponseFromHttpUrl();
+            eventList = NetworkUtils.parseJson(jsonResponse);
+            */
+                Retrofit retrofit = NetworkUtils.connectWithRetrofit();
+                NetworkUtils.ApiService apiService = retrofit.create(NetworkUtils.ApiService.class);
+                apiService.getEvents().enqueue(new Callback<List<Event>>() {
+                    @Override
+                    public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+                        int statusCode = response.code();
+                        eventList[0] = response.body();
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Event>> call, Throwable t) {
+                        Log.d(TAG,"ERROR when retreiving and parsing apis service");
+                    }
+                });
+
+            return eventList[0];
         }
 
         @Override

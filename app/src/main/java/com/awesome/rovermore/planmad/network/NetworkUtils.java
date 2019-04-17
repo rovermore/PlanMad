@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.awesome.rovermore.planmad.datamodel.Event;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,18 +22,44 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Calendar;
+
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
 
 public class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
     private static final String API_URL = "https://datos.madrid.es/portal/site/egob/menuitem.ac61933d6ee3c31cae77ae7784f1a5a0/?vgnextoid=00149033f2201410VgnVCM100000171f5a0aRCRD&format=json&file=0&filename=206974-0-agenda-eventos-culturales-100&mgmtid=6c0b6d01df986410VgnVCM2000000c205a0aRCRD&preview=full";
+    public static final String BASE_URL = "https://datos.madrid.es/portal/site/egob/menuitem.ac61933d6ee3c31cae77ae7784f1a5a0";
 
+
+    //public retrofit interface
+    public interface ApiService {
+        @GET("?vgnextoid=00149033f2201410VgnVCM100000171f5a0aRCRD&format=json&file=0&filename=206974-0-agenda-eventos-culturales-100&mgmtid=6c0b6d01df986410VgnVCM2000000c205a0aRCRD&preview=full")
+        Call<List<Event>> getEvents();
+
+    }
+
+    //Connect with Retrofit
+    public static Retrofit connectWithRetrofit(){
+        Gson gson = new GsonBuilder()
+                .setDateFormat("dd-MM-yyyy HH:mm")
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        return retrofit;
+    }
 
     /**
      * Builds the URL used to talk to the MovieDB server.
