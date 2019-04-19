@@ -27,9 +27,6 @@ import com.awesome.rovermore.planmad.database.AppDatabase;
 import com.awesome.rovermore.planmad.datamodel.Event;
 import com.awesome.rovermore.planmad.network.NetworkUtils;
 
-import org.json.JSONException;
-
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -121,7 +118,8 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             @Override
             public void onRefresh() {
                 if(NetworkUtils.isInternetAvailable(getContext())){
-                    new FetchEvents().execute(ASYNC_TASK_INT);
+                    //new FetchEvents().execute(ASYNC_TASK_INT);
+                    getListFromRetrofit();
                 } else {
                     Toast.makeText(getContext(),R.string.network_error,Toast.LENGTH_SHORT).show();
                 }
@@ -148,7 +146,8 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
                 setFirstEvent = false;
             } else {
                 if(NetworkUtils.isInternetAvailable(getContext())){
-                    new FetchEvents().execute(ASYNC_TASK_INT);
+                    //new FetchEvents().execute(ASYNC_TASK_INT);
+                    getListFromRetrofit();
                 } else {
                     Toast.makeText(getContext(),R.string.network_error,Toast.LENGTH_SHORT).show();
                 }
@@ -156,7 +155,8 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
 
         } else {
             if(NetworkUtils.isInternetAvailable(getContext())){
-                new FetchEvents().execute(ASYNC_TASK_INT);
+                //new FetchEvents().execute(ASYNC_TASK_INT);
+                getListFromRetrofit();
             } else {
                 Toast.makeText(getContext(),R.string.network_error,Toast.LENGTH_SHORT).show();
             }
@@ -183,28 +183,15 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
 
         @Override
         protected List<Event> doInBackground(Integer... integers) {
-            //List<Event> eventList = new ArrayList<>();
+            List<Event> eventList = new ArrayList<>();
 
-                final List<Event>[] eventList = new List[];
+                //final List<Event>[] eventList = new List[];
             /*String jsonResponse = NetworkUtils.getResponseFromHttpUrl();
             eventList = NetworkUtils.parseJson(jsonResponse);
             */
-                Retrofit retrofit = NetworkUtils.connectWithRetrofit();
-                NetworkUtils.ApiService apiService = retrofit.create(NetworkUtils.ApiService.class);
-                apiService.getEvents().enqueue(new Callback<List<Event>>() {
-                    @Override
-                    public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
-                        int statusCode = response.code();
-                        eventList[0] = response.body();
-                    }
 
-                    @Override
-                    public void onFailure(Call<List<Event>> call, Throwable t) {
-                        Log.d(TAG,"ERROR when retreiving and parsing apis service");
-                    }
-                });
 
-            return eventList[0];
+            return eventList;
         }
 
         @Override
@@ -272,4 +259,43 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         eventListAdapter.setEventList(currentMonthEventList);
         monthSpinner.setSelection(currentDateInt - 1);
     }
+
+    private void getListFromRetrofit(){
+
+        Retrofit retrofit = NetworkUtils.connectWithRetrofit();
+        NetworkUtils.AyuntamientoMadridService ayuntamientoMadridService = retrofit.create(NetworkUtils.AyuntamientoMadridService.class);
+        Call<List<Event>> call = ayuntamientoMadridService.getEvents();
+        call.enqueue(new Callback<List<Event>>() {
+            @Override
+            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+                if(!response.isSuccessful()) {
+                    Log.e(TAG,"Response code is: " + response.code());
+                } else {
+                    Log.e(TAG,"Response code is: " + response.code());
+                    List<Event> events = response.body();
+                    eventList = events;
+                    progressBar.setVisibility(View.GONE);
+                    linearLayout.setVisibility(View.VISIBLE);
+                    if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
+                    if(mListState!=null && monthPosition >= 0 && monthPosition <= 11){
+                        setMonthList();
+                    } else {
+                        setCurrentMonth();
+                    }
+                    swipeRefreshLayout.setRefreshing(false);
+                    if(mListState!=null) layoutManager.onRestoreInstanceState(mListState);
+                    if(mListState==null) clickedEvent = eventList.get(0);
+                    onDataPass.onDataPass(mListState, clickedEvent, monthPosition);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Event>> call, Throwable t) {
+                Log.d(TAG,"ERROR: " + t.toString());
+            }
+        });
+    }
 }
+
+
