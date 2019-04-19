@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.awesome.rovermore.planmad.datamodel.Event;
+import com.awesome.rovermore.planmad.datamodel.EventFeed;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -46,7 +47,7 @@ public class NetworkUtils {
     //public retrofit interface
     public interface AyuntamientoMadridService {
         @GET("?vgnextoid=00149033f2201410VgnVCM100000171f5a0aRCRD&format=json&file=0&filename=206974-0-agenda-eventos-culturales-100&mgmtid=6c0b6d01df986410VgnVCM2000000c205a0aRCRD&preview=full")
-        Call<List<Event>> getEvents();
+        Call<EventFeed> getEventFeed();
 
     }
 
@@ -181,21 +182,26 @@ public class NetworkUtils {
         return eventList;
     }
 
-    private static String parseEventType (String type){
+    public static String parseEventType (String type){
         Log.d(TAG, "THE RECEIVED TYPE IS :" + type);
         if(type==""){
             return null;
         }
         type = type + "/";
         String[] firstSplit = type.split("actividades/");
-        String firstResult = firstSplit[1];
-        String[] secondSplit = firstResult.split("/");
-        String eventType = secondSplit[0];
-        Log.d(TAG,"the event type is " + eventType);
-        return eventType;
+        if(firstSplit.length>1) {
+            String firstResult = firstSplit[1];
+            String[] secondSplit = firstResult.split("/");
+            String eventType = secondSplit[0];
+            Log.d(TAG, "the event type is " + eventType);
+            return eventType;
+        } else {
+            String firstResult = firstSplit[0];
+            return firstResult;
+        }
     }
 
-    private static void sortEventList(List<Event> eventList) {
+    public static void sortEventList(List<Event> eventList) {
         Collections.sort(eventList, new Comparator<Event>() {
             @Override
             public int compare(Event o1, Event o2) {

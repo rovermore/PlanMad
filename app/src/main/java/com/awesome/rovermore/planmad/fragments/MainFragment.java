@@ -2,7 +2,6 @@ package com.awesome.rovermore.planmad.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -25,6 +24,10 @@ import com.awesome.rovermore.planmad.activities.MainActivity;
 import com.awesome.rovermore.planmad.adapters.MainAdapter;
 import com.awesome.rovermore.planmad.database.AppDatabase;
 import com.awesome.rovermore.planmad.datamodel.Event;
+import com.awesome.rovermore.planmad.datamodel.EventFeed;
+import com.awesome.rovermore.planmad.datamodel.Graph;
+import com.awesome.rovermore.planmad.datamodel.MyLocation;
+import com.awesome.rovermore.planmad.datamodel.Recurrence;
 import com.awesome.rovermore.planmad.network.NetworkUtils;
 
 import java.text.DateFormat;
@@ -179,40 +182,6 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
     }
 
 
-    private class FetchEvents extends AsyncTask<Integer, Void, List<Event>> {
-
-        @Override
-        protected List<Event> doInBackground(Integer... integers) {
-            List<Event> eventList = new ArrayList<>();
-
-                //final List<Event>[] eventList = new List[];
-            /*String jsonResponse = NetworkUtils.getResponseFromHttpUrl();
-            eventList = NetworkUtils.parseJson(jsonResponse);
-            */
-
-
-            return eventList;
-        }
-
-        @Override
-        protected void onPostExecute(List<Event> events) {
-            super.onPostExecute(events);
-            eventList = events;
-            progressBar.setVisibility(View.GONE);
-            linearLayout.setVisibility(View.VISIBLE);
-            if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
-            if(mListState!=null && monthPosition >= 0 && monthPosition <= 11){
-                setMonthList();
-            } else {
-                setCurrentMonth();
-            }
-            swipeRefreshLayout.setRefreshing(false);
-            if(mListState!=null) layoutManager.onRestoreInstanceState(mListState);
-            if(mListState==null) clickedEvent = eventList.get(0);
-            onDataPass.onDataPass(mListState, clickedEvent, monthPosition);
-        }
-    }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -264,15 +233,61 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
 
         Retrofit retrofit = NetworkUtils.connectWithRetrofit();
         NetworkUtils.AyuntamientoMadridService ayuntamientoMadridService = retrofit.create(NetworkUtils.AyuntamientoMadridService.class);
-        Call<List<Event>> call = ayuntamientoMadridService.getEvents();
-        call.enqueue(new Callback<List<Event>>() {
+        Call<EventFeed> call = ayuntamientoMadridService.getEventFeed();
+        call.enqueue(new Callback<EventFeed>() {
             @Override
-            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+            public void onResponse(Call<EventFeed> call, Response<EventFeed> response) {
                 if(!response.isSuccessful()) {
                     Log.e(TAG,"Response code is: " + response.code());
                 } else {
                     Log.e(TAG,"Response code is: " + response.code());
-                    List<Event> events = response.body();
+                    EventFeed eventFeed = response.body();
+                    List<Graph> graphList = eventFeed.getGraphList();
+                    List<Event> events = new ArrayList<>();
+                    for(Graph graph : graphList){
+
+                        String stringHash = graph.getId();
+                        int hash = Integer.parseInt(stringHash);
+                        String type = graph.getTypeUrl();
+                        String eventType = NetworkUtils.parseEventType(type);
+                        String title = graph.getTitle();
+                        String description = graph.getDescription();
+                        int price = graph.getPrice();
+                        String stringDtStart = graph.getDtstart();
+                        Date dtstart = NetworkUtils.fromStringToDate(stringDtStart);
+                        String stringDtEnd = graph.getDtend();
+                        Date dtend = NetworkUtils.fromStringToDate(stringDtEnd);
+                        String link = graph.getLink();
+                        Recurrence jsonRecurrence = graph.getRecurrence();
+                        String recurrenceDays = null;
+                        String recurrenceFrequency = null;
+                        if(jsonRecurrence!=null) {
+                            recurrenceDays = jsonRecurrence.getDays();
+                            recurrenceFrequency = jsonRecurrence.getFrequency();
+                        }
+                        String eventLocation = graph.getEvent_location();
+                        MyLocation jsonLocation = graph.getLocation();
+                        double latitude = 0;
+                        double longitude = 0;
+                        if(jsonLocation!=null) {
+                            latitude = jsonLocation.getLatitude();
+                            longitude = jsonLocation.getLongitude();
+                        }
+
+                        Event event = new Event(hash, title, description, price, dtstart, dtend,recurrenceDays,
+                                recurrenceFrequency, eventLocation, latitude, longitude, eventType, false, link);
+
+                        Log.v(TAG, "title " + title);
+                        Log.v(TAG, "id " + hash);
+                        Log.v(TAG, "RECURRENCE DAYS: " + recurrenceDays);
+                        Log.v(TAG, "RECURRENCE FREQUENCY " + recurrenceFrequency);
+                        Log.v(TAG, "LATITUDE " + latitude);
+                        Log.v(TAG, "LONGITUDE " + longitude);
+
+                        events.add(event);
+                    }
+
+                    NetworkUtils.sortEventList(events);
                     eventList = events;
                     progressBar.setVisibility(View.GONE);
                     linearLayout.setVisibility(View.VISIBLE);
@@ -291,7 +306,7 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
             }
 
             @Override
-            public void onFailure(Call<List<Event>> call, Throwable t) {
+            public void onFailure(Call<EventFeed> call, Throwable t) {
                 Log.d(TAG,"ERROR: " + t.toString());
             }
         });
