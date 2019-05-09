@@ -5,6 +5,8 @@
     <string name="title_today">Hoy</string>
     <string name="title_map">Mapa</string>
 
+    <string name="api_error">Ooops... parece que el ayuntamiento tiene un problema con su envío de datos. Sentimos las molestias</string>
+
     <string name="date_format">"yyyy-MM-dd HH:mm:ss"</string>
 
     <string name="network_error">No se pudo conectar a internet</string>

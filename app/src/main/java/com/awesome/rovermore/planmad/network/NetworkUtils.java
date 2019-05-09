@@ -87,7 +87,11 @@ public class NetworkUtils {
         try {
             resultJson = new JSONObject(json);
         } catch (JSONException e) {
+            eventList = null;
             e.printStackTrace();
+            return eventList;
+
+
         }
         JSONArray resultArray = resultJson.optJSONArray("@graph");
         for (int i = 0; i < resultArray.length(); i++) {

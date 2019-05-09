@@ -190,19 +190,23 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         @Override
         protected void onPostExecute(List<Event> events) {
             super.onPostExecute(events);
-            eventList = events;
-            progressBar.setVisibility(View.GONE);
-            linearLayout.setVisibility(View.VISIBLE);
-            if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
-            if(mListState!=null && monthPosition >= 0 && monthPosition <= 11){
-                setMonthList();
+            if (events == null) {
+                Toast.makeText(getContext(), R.string.api_error, Toast.LENGTH_LONG).show();
             } else {
-                setCurrentMonth();
+                eventList = events;
+                progressBar.setVisibility(View.GONE);
+                linearLayout.setVisibility(View.VISIBLE);
+                if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
+                if (mListState != null && monthPosition >= 0 && monthPosition <= 11) {
+                    setMonthList();
+                } else {
+                    setCurrentMonth();
+                }
+                swipeRefreshLayout.setRefreshing(false);
+                if (mListState != null) layoutManager.onRestoreInstanceState(mListState);
+                if (mListState == null) clickedEvent = eventList.get(0);
+                onDataPass.onDataPass(mListState, clickedEvent, monthPosition);
             }
-            swipeRefreshLayout.setRefreshing(false);
-            if(mListState!=null) layoutManager.onRestoreInstanceState(mListState);
-            if(mListState==null) clickedEvent = eventList.get(0);
-            onDataPass.onDataPass(mListState, clickedEvent, monthPosition);
         }
     }
 
