@@ -8,7 +8,7 @@ localProperties.load(new FileInputStream(localPropertiesFile))
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.awesome.rovermore.planmad"
+        applicationId "com.rvm.rovermore.planmad"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
