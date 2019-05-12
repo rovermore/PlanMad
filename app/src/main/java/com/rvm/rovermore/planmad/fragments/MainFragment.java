@@ -191,22 +191,29 @@ public class MainFragment extends Fragment implements MainAdapter.onEventClickLi
         protected void onPostExecute(List<Event> events) {
             super.onPostExecute(events);
             if (events == null) {
-                Toast.makeText(getContext(), R.string.api_error, Toast.LENGTH_LONG).show();
+                List<Event> jsonFileEventList = new ArrayList<>();
+                try {
+                    jsonFileEventList = NetworkUtils.parseJsonfromRawFile(getContext());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                eventList = jsonFileEventList;
             } else {
                 eventList = events;
-                progressBar.setVisibility(View.GONE);
-                linearLayout.setVisibility(View.VISIBLE);
-                if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
-                if (mListState != null && monthPosition >= 0 && monthPosition <= 11) {
-                    setMonthList();
-                } else {
-                    setCurrentMonth();
-                }
-                swipeRefreshLayout.setRefreshing(false);
-                if (mListState != null) layoutManager.onRestoreInstanceState(mListState);
-                if (mListState == null) clickedEvent = eventList.get(0);
-                onDataPass.onDataPass(mListState, clickedEvent, monthPosition);
             }
+            progressBar.setVisibility(View.GONE);
+            linearLayout.setVisibility(View.VISIBLE);
+            if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
+            if (mListState != null && monthPosition >= 0 && monthPosition <= 11) {
+                setMonthList();
+            } else {
+                setCurrentMonth();
+            }
+            swipeRefreshLayout.setRefreshing(false);
+            if (mListState != null) layoutManager.onRestoreInstanceState(mListState);
+            if (mListState == null) clickedEvent = eventList.get(0);
+            onDataPass.onDataPass(mListState, clickedEvent, monthPosition);
+
         }
     }
 

@@ -446,10 +446,16 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         protected List<Event> doInBackground(Integer... integers) {
             List<Event> eventList = new ArrayList<>();
             List<Event> todayEventList = new ArrayList<>();
+            List<Event> jsonFileEventList = new ArrayList<>();
             try {
                 String jsonResponse = NetworkUtils.getResponseFromHttpUrl();
                 eventList = NetworkUtils.parseJson(jsonResponse);
-                todayEventList = NetworkUtils.getTodayList(eventList);
+                if(eventList!=null) {
+                    todayEventList = NetworkUtils.getTodayList(eventList);
+                } else {
+                    jsonFileEventList = NetworkUtils.parseJsonfromRawFile(getApplicationContext());
+                    todayEventList = NetworkUtils.getTodayList(jsonFileEventList);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
@@ -461,8 +467,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnDa
         @Override
         protected void onPostExecute(List<Event> events) {
             super.onPostExecute(events);
-            eventList = events;
-            setUpMapFragment();
+            if (events != null) {
+                eventList = events;
+                setUpMapFragment();
+            }
         }
     }
 

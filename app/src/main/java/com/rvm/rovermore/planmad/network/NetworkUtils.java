@@ -1,18 +1,26 @@
 package com.rvm.rovermore.planmad.network;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.rvm.rovermore.planmad.R;
 import com.rvm.rovermore.planmad.datamodel.Event;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,12 +28,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Calendar;
 
 public class NetworkUtils {
 
@@ -234,6 +242,38 @@ public class NetworkUtils {
         }
         String finalString = daysInSpanish.toString();
         return finalString;
+    }
+
+    public static List<Event> parseJsonfromRawFile(Context context) throws JSONException {
+        Resources resources = context.getResources();
+        InputStream is = resources.openRawResource(R.raw.events_json_list);
+        Writer writer = new StringWriter();
+        char[] buffer = new char[1024];
+        try {
+            Reader reader = null;
+            try {
+                reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            int n;
+            while ((n = reader.read(buffer)) != -1) {
+                writer.write(buffer, 0, n);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String jsonString = writer.toString();
+
+        List<Event> mListEvent = parseJson(jsonString);
+        return mListEvent;
     }
 }
 

@@ -122,10 +122,16 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
         protected List<Event> doInBackground(Integer... integers) {
             List<Event> eventList = new ArrayList<>();
             List<Event> todayEventList = new ArrayList<>();
+            List<Event> jsonFileEventList = new ArrayList<>();
             try {
                 String jsonResponse = NetworkUtils.getResponseFromHttpUrl();
                 eventList = NetworkUtils.parseJson(jsonResponse);
-                todayEventList = NetworkUtils.getTodayList(eventList);
+                if(eventList!=null) {
+                    todayEventList = NetworkUtils.getTodayList(eventList);
+                } else {
+                    jsonFileEventList = NetworkUtils.parseJsonfromRawFile(getContext());
+                    todayEventList = NetworkUtils.getTodayList(jsonFileEventList);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
@@ -136,9 +142,8 @@ public class TodayFragment extends Fragment implements MainAdapter.onEventClickL
 
         @Override
         protected void onPostExecute(List<Event> events) {
-            if (events == null) {
-                Toast.makeText(getContext(), R.string.api_error, Toast.LENGTH_LONG).show();
-            } else {
+            if (events != null) {
+                eventList = events;
                 super.onPostExecute(events);
                 eventList = events;
                 if (eventListAdapter != null) eventListAdapter.clearEventListAdapter();
